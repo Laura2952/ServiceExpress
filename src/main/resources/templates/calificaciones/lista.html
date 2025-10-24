@@ -1,0 +1,208 @@
+<!-- src/main/resources/templates/calificaciones/lista.html -->
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Calificaciones | ServiExpress</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        :root{
+            --bg:#f8f4f1;
+            --panel:#fff;
+            --accent:#c5705d;
+            --accent-dark:#a85848;
+            --text:#2e1d15;
+            --muted:#7a6a60;
+            --border:#e8dcd3;
+            --shadow:rgba(0,0,0,.05);
+        }
+        *{box-sizing:border-box;margin:0;padding:0;font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+        body{
+            background:var(--bg);
+            color:var(--text);
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+        }
+
+        /* NAVBAR */
+        nav{
+            background:#fae7dc;
+            border-bottom:1px solid var(--border);
+            padding:16px 28px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+        .nav-brand{
+            font-size:1.4rem;
+            font-weight:800;
+            color:var(--accent);
+            text-decoration:none;
+        }
+        .nav-actions{display:flex;gap:10px;align-items:center}
+        .nav-btn{
+            background:var(--accent);
+            color:#fff;
+            border:none;
+            border-radius:12px;
+            font-weight:700;
+            padding:10px 18px;
+            cursor:pointer;
+            transition:background .2s ease, transform .1s ease;
+            box-shadow:0 6px 16px rgba(197,112,93,.25);
+        }
+        .nav-btn:hover{background:var(--accent-dark);transform:translateY(-1px)}
+
+        /* MAIN WRAPPER */
+        .wrap{
+            flex:1;
+            max-width:1200px;
+            margin:40px auto;
+            padding:0 20px;
+        }
+        h1{
+            font-size:2rem;
+            font-weight:800;
+            text-align:center;
+            margin-bottom:30px;
+            color:var(--text);
+        }
+
+        /* FILTER CHIPS */
+        .filters{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:20px;
+            justify-content:center;
+        }
+        .filters .lbl{color:var(--muted);font-weight:700}
+        .chip{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:8px 14px;
+            border-radius:999px;
+            background:#f3ebe5;
+            border:1px solid var(--border);
+            font-weight:700;
+            text-decoration:none;
+            color:var(--text);
+            transition:all .15s ease;
+        }
+        .chip:hover{background:#f1e0d9}
+        .chip.active{background:#ffd9c8;border-color:#ffc5b0}
+        .stars-sm{letter-spacing:1px;font-size:15px;color:var(--accent)}
+
+        /* GRID CARDS */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
+            gap:20px;
+        }
+        .card{
+            background:var(--panel);
+            border:1px solid var(--border);
+            border-radius:18px;
+            box-shadow:0 8px 24px var(--shadow);
+            padding:20px 22px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+        .meta{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:6px;
+        }
+        .when{font-weight:700;color:var(--muted)}
+        .stars{font-size:18px;letter-spacing:2px;color:var(--accent)}
+        .comment{
+            margin:16px 0 12px;
+            color:#3b312c;
+            font-size:15px;
+            line-height:1.4;
+        }
+        .row-muted{
+            font-size:14px;
+            color:var(--muted);
+            display:flex;
+            flex-wrap:wrap;
+            gap:12px;
+        }
+        .row-muted b{color:var(--text)}
+        @media(max-width:520px){
+            .grid{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a th:href="@{/}" class="nav-brand">ServiExpress</a>
+    <div class="nav-actions">
+        <form th:action="@{/auth/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="nav-btn">Cerrar sesión</button>
+        </form>
+    </div>
+</nav>
+
+<div class="wrap">
+    <h1>Historial de Calificaciones</h1>
+
+    <!-- FILTROS -->
+    <div class="filters">
+        <span class="lbl">Filtrar por estrellas:</span>
+
+        <a class="chip" th:classappend="${rating} == null ? ' active' : ''"
+           th:href="@{/calificaciones}">Todas</a>
+
+        <a class="chip" th:classappend="${rating} == 1 ? ' active' : ''"
+           th:href="@{/calificaciones(rating=1)}"><span class="stars-sm">★☆☆☆☆</span></a>
+
+        <a class="chip" th:classappend="${rating} == 2 ? ' active' : ''"
+           th:href="@{/calificaciones(rating=2)}"><span class="stars-sm">★★☆☆☆</span></a>
+
+        <a class="chip" th:classappend="${rating} == 3 ? ' active' : ''"
+           th:href="@{/calificaciones(rating=3)}"><span class="stars-sm">★★★☆☆</span></a>
+
+        <a class="chip" th:classappend="${rating} == 4 ? ' active' : ''"
+           th:href="@{/calificaciones(rating=4)}"><span class="stars-sm">★★★★☆</span></a>
+
+        <a class="chip" th:classappend="${rating} == 5 ? ' active' : ''"
+           th:href="@{/calificaciones(rating=5)}"><span class="stars-sm">★★★★★</span></a>
+    </div>
+
+    <!-- LISTA EN CARDS -->
+    <div class="grid">
+        <article class="card" th:each="c : ${calificaciones}">
+            <div>
+                <div class="meta">
+                    <div class="when" th:text="${#temporals.format(c.fecha, 'yyyy-MM-dd HH:mm')}">2025-09-06 22:40</div>
+                    <div class="stars"
+                         th:text="${'★'.repeat(c.puntuacion) + '☆'.repeat(5 - c.puntuacion)}">★★★★★</div>
+                </div>
+
+                <div class="comment" th:text="${c.comentario}">Comentario…</div>
+
+                <div class="row-muted">
+                    <span>Proveedor: <b th:text="${c.proveedor.nombreUsuario}">—</b></span>
+                    <span>Servicio: <b th:text="${c.servicio != null ? c.servicio.nombre : '—'}">—</b></span>
+                    <span>Cliente: <b th:text="${c.cliente.nombreUsuario}">—</b></span>
+                </div>
+            </div>
+        </article>
+
+        <div th:if="${#lists.isEmpty(calificaciones)}" class="card">
+            <div class="comment">No hay calificaciones para este filtro.</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

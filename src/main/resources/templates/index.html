@@ -1,0 +1,246 @@
+<!-- =====================
+ ServiExpress · HOME (index)
+ Estilo unificado (Poppins, paleta melocotón/terracota, botones y tarjetas consistentes)
+===================== -->
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ServiExpress · Marketplace</title>
+
+    <!-- Poppins (peso 400/600/800) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Hoja global si la tienes -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        :root{
+            /* Paleta unificada */
+            --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1; --text:#3e2a2a; --muted:#7b5e57;
+            --brand:#c77462; --brand-600:#ba6b59; --brand-2:#a45445; --ring:#e9c9be;
+            --surface:#ffffff; --line:#efdfd7; --footer-bg:#e9dbd3; --footer-text:#5b4039;
+            --radius:14px;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--page);color:var(--text)}
+
+        .page{min-height:100vh;display:flex;flex-direction:column}
+        main{flex:1}
+        .shell{width:100%;padding:0 24px}
+        .wrap-xl{max-width:1200px;margin:0 auto}
+
+        /* NAVBAR */
+        .navbar{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,var(--bg1),var(--bg2));border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(4px)}
+        .navbar .inner{display:flex;align-items:center;gap:14px;padding:12px 16px}
+        .brand a{font-weight:800;letter-spacing:.2px;font-size:20px;text-decoration:none;color:var(--brand-2)}
+        .nav-spacer{flex:1}
+
+        .search{flex:1;max-width:540px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--ring);border-radius:999px;padding:8px 12px;box-shadow:0 8px 20px rgba(199,116,98,.08)}
+        .search input{border:0;outline:0;width:100%;font-size:14px;color:var(--text)}
+        @media (max-width:860px){.search{display:none}}
+
+        .nav-actions{display:flex;gap:10px;align-items:center}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--brand);color:var(--brand-2);background:transparent;transition:.18s ease;cursor:pointer}
+        .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(199,116,98,.18)}
+        .btn.filled{background:var(--brand);color:#fff;border-color:var(--brand)}
+        .btn.filled:hover{background:var(--brand-600)}
+        .btn.ghost{background:transparent;border-color:#d1b7af;color:#5a403a}
+        .btn.linklike{background:transparent;border-color:transparent;padding:10px 12px}
+
+        /* HERO media — versión más pequeña */
+        .hero-media{
+            width:clamp(140px, 22vw, 240px); /* ↓ antes 240–380px */
+            max-width:28%;
+            aspect-ratio:4/3;
+            border-radius:var(--radius);
+            overflow:hidden;
+            background:#F8EDE3;
+            display:grid;
+            place-items:center;
+        }
+        .hero-media img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+        }
+
+        /* Ajuste en móviles */
+        @media (max-width:780px){
+            header .card{flex-direction:column}
+            .hero-media{
+                width:80%;
+                max-width:320px;
+                aspect-ratio:16/9;
+            }
+        }
+
+        /* Secciones / tarjetas */
+        header .card{border:1px solid var(--line)}
+        .title{color:var(--text)}
+        .badge{display:inline-block;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #f0d8cf;font-weight:600;color:#5e4038}
+        .badge.primary{background:#fff;border-color:#eec8bd;color:var(--brand-2)}
+        .bg-surface{background:#fff;border-radius:var(--radius)}
+        .shadow-md{box-shadow:0 10px 24px rgba(0,0,0,.06)}
+        .card{border-radius:var(--radius);background:#fff;border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.05)}
+        .grid{display:grid;gap:16px}
+        .cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+        .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+        @media(max-width:1024px){.cols-4{grid-template-columns:repeat(3,1fr)}}
+        @media(max-width:780px){.cols-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:520px){.cols-4,.cols-3{grid-template-columns:1fr}}
+        .section{margin:26px 0}
+        .section--services{margin-top:24px;margin-bottom:40px}
+        .section--top{margin-top:44px}
+        .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+        .divider{height:1px;background:linear-gradient(90deg,#efd8cf,transparent);margin:14px 0}
+        .pagination{display:flex;gap:6px}
+        .page-btn{display:inline-block;padding:8px 12px;border:1px solid #e7cfc6;border-radius:10px;text-decoration:none;color:#6a4b44}
+        .page-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+        .product-card{overflow:hidden;display:flex;flex-direction:column}
+        .product-card .media img{width:100%;height:190px;object-fit:cover;display:block}
+        .product-card .body{padding:14px}
+        .price{font-weight:800;color:#2e2a28}
+        .muted{color:#8a6f67}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+        /* FOOTER */
+        .footer{background:var(--footer-bg);color:var(--footer-text);border-top:1px solid #d8c8c0;padding:22px 0;margin-top:24px}
+    </style>
+</head>
+
+<body th:attr="data-cliente-id=${idCliente != null ? idCliente : 0}">
+<div class="page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar" role="navigation">
+        <div class="inner shell wrap-xl">
+            <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
+            <div class="nav-spacer"></div>
+            <div class="nav-actions">
+                <a class="btn ghost" th:href="@{/}">Inicio</a>
+
+                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   th:href="@{/Admins/servicios}"
+                   class="btn">⚙️ Gestionar Servicios</a>
+
+                <a th:if="${#authorization.expression('hasRole(''CLIENTE'') or hasRole(''PROVEEDOR'')')}"
+                   th:href="@{/servicio}"
+                   class="btn filled">🚀 Ir a Servicios</a>
+
+                <a class="btn ghost" th:href="@{/Admins/usuarios}" sec:authorize="hasRole('ADMIN')">Gestión Usuarios</a>
+
+                <a class="btn" th:href="@{/auth/login}" sec:authorize="!isAuthenticated()">Iniciar sesión</a>
+                <a class="btn filled" th:href="@{/auth/registro}" sec:authorize="!isAuthenticated()">Registrar usuario</a>
+                <form th:action="@{/auth/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn linklike">Cerrar sesión</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main>
+        <!-- HERO -->
+        <header class="shell section">
+            <div class="wrap-xl">
+                <div class="card bg-surface shadow-md" style="padding:24px;display:flex;align-items:center;gap:24px">
+                    <div style="flex:1">
+                        <h1 class="title" style="margin:0 0 6px">Encuentra profesionales confiables</h1>
+                        <p class="text-muted" style="margin:0">Limpieza, plomería, electricidad, reparaciones y más — cerca de ti, con pagos seguros y calificaciones reales.</p>
+                        <div class="mt-4" style="display:flex;gap:10px;flex-wrap:wrap">
+                            <a class="badge primary" th:href="@{/calificaciones}">⭐ Más valorados</a>
+                            <a class="badge">🏷️ Promociones</a>
+                            <a class="badge">🧹 Limpieza</a>
+                            <a class="badge">🔧 Plomería</a>
+                            <a class="badge">💡 Electricidad</a>
+                        </div>
+                    </div>
+
+                    <!-- Imagen hero con tamaño controlado -->
+                    <div class="hero-media">
+                        <img src="/images/logo.png" alt="Profesional prestando servicio" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SERVICIOS -->
+        <section class="shell section section--services">
+            <div class="wrap-xl">
+                <div class="section-header">
+                    <h2 style="margin:0">Servicios destacados</h2>
+                    <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+                        <a class="page-btn" th:href="@{/(page=${currentPage > 0 ? currentPage - 1 : 0})}">«</a>
+                        <a class="page-btn"
+                           th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == currentPage} ? ' active' : ''"
+                           th:href="@{/(page=${i})}">1</a>
+                        <a class="page-btn" th:href="@{/(page=${currentPage + 1 >= totalPages ? totalPages - 1 : currentPage + 1})}">»</a>
+                    </div>
+                </div>
+
+                <div class="grid cols-4" th:if="${!#lists.isEmpty(servicios)}">
+                    <article class="product-card card" th:each="s : ${servicios}">
+                        <div class="media">
+                            <img src="https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop" alt="" loading="lazy">
+                        </div>
+                        <div class="body">
+                            <h3 class="title" th:text="${s.nombre}">Nombre</h3>
+                            <div class="meta" th:text="${s.descripcion}">Descripción…</div>
+                            <div class="meta mt-2" th:if="${s.proveedor != null}">Proveedor: <strong th:text="${s.proveedor.nombreUsuario}">—</strong></div>
+                            <div class="price mt-2" th:text="${#numbers.formatDecimal(s.precio, 0, 0)}">$0</div>
+                            <div class="actions">
+                                <a class="btn ghost" th:href="@{'/calificaciones'(servicio=${s.idServicio})}">Ver calificaciones</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="muted" th:if="${#lists.isEmpty(servicios)}" style="margin-top:12px">No hay servicios disponibles.</div>
+                <div class="divider"></div>
+            </div>
+        </section>
+
+        <!-- TOP PROVEEDORES -->
+        <section class="shell section section--top">
+            <div class="wrap-xl">
+                <div class="card">
+                    <div class="body" style="padding:16px">
+                        <h2 class="title" style="margin-bottom:14px">Proveedores top de la semana</h2>
+                        <div class="grid cols-3" th:if="${!#lists.isEmpty(topProveedores)}">
+                            <div class="card p-3" th:each="p : ${topProveedores}">
+                                <div class="meta">👤 <strong th:text="${p.nombreProveedor}">Nombre</strong></div>
+                                <a class="badge primary mt-2" th:href="@{/calificaciones(proveedor=${p.idProveedor})}">
+                                    ⭐ <span th:text="${#numbers.formatDecimal(p.promedio, 1, 2)}">4.90</span>
+                                    · <span th:text="${p.total}">0</span> reseñas
+                                </a>
+                            </div>
+                        </div>
+                        <div class="muted" th:if="${#lists.isEmpty(topProveedores)}">Aún no hay calificaciones suficientes para el ranking.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="shell">
+            <div class="wrap-xl">
+                © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> ServiExpress. Pagos seguros, soporte y protección al usuario.
+            </div>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>

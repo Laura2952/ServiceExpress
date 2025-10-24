@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitudes Pendientes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        .btn {
+            padding: 6px 12px;
+            margin: 2px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-aceptar {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-rechazar {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+
+    <!-- Botón para volver al historial de servicios -->
+    <a th:href="@{|/Proveedores/${idProveedor}/historialServicios|}"
+       class="btn btn-secondary">
+        Volver al Historial de Servicios
+    </a>
+</head>
+<body>
+
+<h2>Solicitudes Pendientes</h2>
+
+<div th:if="${#lists.isEmpty(solicitudesPendientes)}">
+    <p>No tienes solicitudes pendientes.</p>
+</div>
+
+<div th:if="${!#lists.isEmpty(solicitudesPendientes)}">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre del Servicio</th>
+            <th>Descripción</th>
+            <th>Cliente</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="servicio : ${solicitudesPendientes}">
+            <td th:text="${servicio.id}"></td>
+            <td th:text="${servicio.nombre}"></td>
+            <td th:text="${servicio.descripcion}"></td>
+            <td th:text="${servicio.cliente != null ? servicio.cliente.nombre : '---'}"></td>
+            <td>
+                <a th:href="@{|/proveedor/${servicio.proveedor.id}/aceptar/${servicio.id}|}" class="btn btn-aceptar">Aceptar</a>
+                <a th:href="@{|/proveedor/${servicio.proveedor.id}/rechazar/${servicio.id}|}" class="btn btn-rechazar">Rechazar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

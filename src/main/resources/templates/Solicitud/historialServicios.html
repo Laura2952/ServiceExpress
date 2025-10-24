@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Servicios</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Fuente Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+          --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1;
+          --text:#3e2a2a; --muted:#7b5e57;
+          --brand:#c77462; --brand-600:#ba6b59; --brand-2:#a45445;
+          --surface:#ffffff; --border:#eadfd9; --line:#efdfd7;
+          --success:#0f5f42; --success-bg:#e6f7ee;
+          --warn:#8b5e00; --warn-bg:#fff7e8;
+          --info:#245bb3; --info-bg:#eef3ff;
+          --ok:#155b2f; --ok-bg:#e9f8ef;
+          --radius:16px;
+        }
+        *{box-sizing:border-box}
+        body{
+          margin:0; color:var(--text); background:var(--page);
+          font-family:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Noto Sans",sans-serif
+        }
+        a{color:inherit; text-decoration:none}
+
+        /* NAV */
+        .navbar{
+          background:linear-gradient(90deg,var(--bg1),var(--bg2));
+          border-bottom:1px solid var(--line);
+          padding:12px 16px; display:flex; align-items:center; gap:14px;
+          position:sticky; top:0; z-index:40; backdrop-filter:saturate(1.1) blur(4px)
+        }
+        .brand a{font-weight:800; font-size:20px; color:var(--brand-2)}
+        .nav-actions{margin-left:auto; display:flex; gap:10px; align-items:center}
+        .btn-nav{
+          display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:16px;
+          border:1px solid #d9a89c; background:#fff; color:#8a4e44; font-weight:700; cursor:pointer
+        }
+
+        .container{max-width:1200px; margin:28px auto 40px; padding:0 16px}
+        h1{text-align:center; margin:8px 0 18px; font-size:clamp(22px,3.2vw,32px)}
+
+        /* Alerts */
+        .alert{border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin:10px 0; font-weight:600}
+        .alert.success{background:#f0faf4; border-color:#cce9d8; color:#1f7a50}
+        .alert.danger{background:#fff5f5; border-color:#f0d1cf; color:#9c2f2f}
+
+        /* Tabla */
+        .table-wrap{
+          background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+          box-shadow:0 20px 40px rgba(0,0,0,.06); overflow:hidden
+        }
+        .table-head{
+          display:flex; gap:12px; align-items:center; justify-content:space-between;
+          padding:12px 14px; background:#fbeae0; border-bottom:1px solid var(--border)
+        }
+        .table-scroll{overflow:auto}
+        table{width:100%; min-width:1100px; border-collapse:collapse}
+        thead th{
+          background:#fbeae0; text-align:left; padding:12px 14px; font-weight:800; color:#563d37; white-space:nowrap
+        }
+        tbody td{padding:12px 14px; border-top:1px solid var(--border)}
+        tbody tr:hover{background:#fff8f4}
+
+        .truncate{max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+        .price{white-space:nowrap; font-weight:700}
+
+        .pill{
+          display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:800;
+          border:1px solid var(--border); background:#faf7f5; color:var(--muted); font-size:.875rem
+        }
+        .pill[data-status="PENDIENTE"]{background:var(--warn-bg); color:var(--warn)}
+        .pill[data-status="PAGO_EN_PROCESO"]{background:var(--info-bg); color:var(--info)}
+        .pill[data-status="PAGO_ACEPTADO"]{background:var(--ok-bg); color:var(--ok)}
+        .pill[data-status="EN PROCESO"]{background:#fff7f4; color:#a3432c}
+        .pill[data-status="FINALIZADO"]{background:var(--success-bg); color:var(--success)}
+
+        .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px 14px; border-radius:10px;
+          font-weight:800; cursor:pointer; border:1px solid var(--border); background:#fff; color:var(--brand-2);
+          transition:background .15s ease,border-color .15s ease,transform .05s ease; text-decoration:none}
+        .btn:hover{background:#fff7f4; border-color:#f0d5ce}
+        .btn.primary{background:var(--brand); border-color:var(--brand); color:#fff}
+        .btn.primary:hover{background:var(--brand-600)}
+        .btn.secondary{background:#95a5a6; border-color:#95a5a6; color:#fff}
+        .btn.secondary:hover{background:#7f8c8d}
+        .btn.danger{background:#e74c3c; border-color:#e74c3c; color:#fff}
+        .btn.danger:hover{background:#c0392b}
+        .btn.disabled{opacity:.5; pointer-events:none}
+
+        /* Acciones sticky a la derecha */
+        th.sticky-actions, td.sticky-actions{
+          position:sticky; right:0; background:#fff; z-index:2; box-shadow:-6px 0 8px rgba(0,0,0,.04); text-align:center
+        }
+        thead th.sticky-actions{background:#fbeae0; z-index:3}
+        .actions{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
+
+        /* Buscador superior */
+        .tools{display:flex; gap:10px; flex-wrap:wrap}
+        .searchbar{
+          display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line);
+          border-radius:999px; padding:8px 12px; max-width:340px
+        }
+        .searchbar input{border:0; outline:0; width:100%; font-size:14px}
+        @media (max-width:760px){ .truncate{max-width:160px} }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
+    <div class="nav-actions">
+        <a th:href="@{/servicio}" class="btn-nav">⬅ Volver a Servicios</a>
+        <form th:action="@{/auth/logout}" method="post" style="margin:0">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button class="btn-nav" type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Historial de Servicios</h1>
+
+    <div class="table-wrap">
+        <div class="table-head">
+            <div class="tools">
+                <div class="searchbar" role="search" aria-label="Filtrar historial">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="#b07a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <input id="buscar" type="search" placeholder="Buscar por servicio, proveedor o estado…">
+                </div>
+            </div>
+            <div class="tools">
+                <a class="btn" th:href="@{/solicitud/historial}">Refrescar</a>
+            </div>
+        </div>
+
+        <div class="table-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Nombre Servicio</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Proveedor</th>
+                    <th>Fecha Solicitud</th>
+                    <th>Dirección</th>
+                    <th>Fecha estimada</th>
+                    <th>Estado</th>
+                    <th>Especificaciones</th>
+                    <th class="sticky-actions">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody id="tablaSolicitudes">
+                <tr th:each="solicitud : ${solicitudes}">
+                    <td class="truncate" th:text="${solicitud.servicio.nombre}">Servicio</td>
+                    <td class="truncate" th:text="${solicitud.servicio.descripcion}">Descripción</td>
+                    <td class="price">$ <span th:text="${#numbers.formatDecimal(solicitud.servicio.precio,0,0)}">0</span></td>
+                    <td class="truncate"
+                        th:text="${solicitud.servicio.proveedor != null ? solicitud.servicio.proveedor.nombreUsuario : 'Sin asignar'}">Proveedor</td>
+                    <td th:text="${#temporals.format(solicitud.fechaSolicitud,'yyyy-MM-dd')}">—</td>
+                    <td class="truncate" th:text="${solicitud.direccionEntrega}">—</td>
+                    <td th:text="${solicitud.fechaEstimada}">—</td>
+                    <td><span class="pill" th:attr="data-status=${solicitud.estado}" th:text="${solicitud.estado}">ESTADO</span></td>
+                    <td class="truncate" th:text="${solicitud.detalles}">—</td>
+
+                    <td class="sticky-actions">
+                        <div class="actions">
+                            <!-- FINALIZADO: Calificar -->
+                            <a th:if="${#strings.equalsIgnoreCase(solicitud.estado,'FINALIZADO')}"
+                               th:href="@{/calificaciones/nueva/solicitud/{id}(id=${solicitud.idSolicitud})}"
+                               class="btn secondary">Calificar</a>
+
+                            <!-- PENDIENTE: Pagar + Cancelar -->
+                            <a th:if="${#strings.equalsIgnoreCase(solicitud.estado,'PENDIENTE')}"
+                               th:href="@{/solicitud/pagar/redir/{id}(id=${solicitud.idSolicitud})}"
+                               class="btn primary">Pagar</a>
+
+                            <form th:if="${#strings.equalsIgnoreCase(solicitud.estado,'PENDIENTE')}"
+                                  th:action="@{'/solicitud/cancelar/' + ${solicitud.idSolicitud}}"
+                                  method="post" onsubmit="return confirm('¿Cancelar esta solicitud?');" style="display:inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn danger">Cancelar</button>
+                            </form>
+
+                            <!-- MÁS INFO: siempre -->
+                            <a th:href="@{/solicitud/detalle/{id}(id=${solicitud.idSolicitud})}" class="btn">Más Info</a>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(solicitudes)}">
+                    <td colspan="10" style="text-align:center; padding:20px">No tienes solicitudes registradas</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filtro por texto en historial
+    const inputBuscar = document.getElementById("buscar");
+    inputBuscar?.addEventListener("input", function () {
+      const q = (this.value || "").toLowerCase();
+      const filas = document.querySelectorAll("#tablaSolicitudes tr");
+      let visibles = 0;
+      filas.forEach(fila => {
+        if (fila.querySelector('td[colspan]')) return;
+        const texto = fila.textContent.toLowerCase();
+        const show = texto.includes(q);
+        fila.style.display = show ? "" : "none";
+        if (show) visibles++;
+      });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title th:text="${title} ?: 'Nueva calificación'">Nueva calificación</title>
+    <style>
+        :root{
+            --bg:#f7efe8; --surface:#ffffff; --text:#2a2a2a; --muted:#8a7a73; --border:#eadfd9;
+            --brand:#d47561; --brand-600:#c06351; --ok:#1f9d65; --warn:#b42318; --star:#f6c344;
+        }
+        *{box-sizing:border-box}
+        body{margin:0; min-height:100vh; color:var(--text);
+            background: radial-gradient(1200px 600px at 0% -20%, #fff0 60%, #f2e7df 61%) no-repeat,
+            linear-gradient(180deg,var(--bg),#fff);
+            font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Noto Sans",sans-serif;}
+        a{color:inherit;text-decoration:none}
+        .container{max-width:980px;margin-inline:auto;padding:24px}
+        .navbar{position:sticky;top:0;background:#fff8;backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+        .navbar .wrap{display:flex;align-items:center;gap:16px}
+        .brand{font-weight:800;letter-spacing:.2px}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;font-weight:700;border:1px solid var(--brand);cursor:pointer}
+        .btn.primary{background:var(--brand);color:#fff}
+        .btn.primary:hover{background:var(--brand-600)}
+        .btn.ghost{background:transparent;color:var(--brand)}
+        .btn.ghost:hover{background:#fff;border-color:var(--brand)}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 50px rgba(30,15,15,.06)}
+        .card .body{padding:28px}
+        h1{font-size:clamp(26px,3.6vw,36px);line-height:1.15;margin:0}
+        .subtle{color:var(--muted);font-weight:600}
+        .row{display:flex;gap:10px;flex-wrap:wrap}
+        .field{margin-top:18px}
+        label{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:8px}
+        textarea,select{width:100%; min-height:46px; resize:vertical;
+            border:1px solid var(--border); border-radius:14px; padding:10px 14px; font:inherit}
+        textarea{min-height:140px}
+        textarea:focus, select:focus{outline:3px solid #0000;border-color:#d9c9c0;box-shadow:0 0 0 4px #e7d6ce}
+        .chip{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--border);padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:600}
+        .footer{display:flex;gap:12px;align-items:center;justify-content:flex-start;margin-top:18px}
+        .alert{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid #f2c6c6;background:#fbecec;color:#7c1d1d}
+        .alert.ok{border-color:#bfe7d1;background:#e6f7ee;color:#105739}
+        .rating{--size:32px; --gap:6px; --inactive:#dfd6cf; --active:var(--star);
+            display:inline-flex; gap:var(--gap); align-items:center;}
+        .star-btn{width:var(--size); height:var(--size); display:inline-grid; place-items:center; border:none; background:transparent; padding:0; cursor:pointer; transition:transform .12s ease;}
+        .star-btn:hover{transform:translateY(-1px) scale(1.03)}
+        .star{width:100%; height:100%; fill:var(--inactive); stroke:#c3b7af; stroke-width:1.2; filter: drop-shadow(0 2px 0 rgba(0,0,0,.04)); transition:fill .15s ease, filter .15s ease;}
+        .star.filled{fill:var(--active); filter: drop-shadow(0 4px 10px rgba(214,150,20,.28));}
+        .hint{margin-left:8px; color:#8a7a73; font-weight:700; min-width:110px}
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container wrap">
+        <a class="brand" th:href="@{/}">ServiExpress</a>
+        <div style="margin-left:auto" class="row">
+            <a class="btn ghost" th:href="@{/}">Inicio</a>
+            <a class="btn ghost" th:href="@{/calificaciones}">Ver calificaciones</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="card">
+        <div class="body">
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+                <div>
+                    <h1>Nueva calificación</h1>
+                    <div class="row" style="margin-top:10px">
+                        <span class="chip" th:if="${calificacion.servicioId != null}">
+                            <strong>Servicio</strong>
+                            <span th:text="${servicioNombre} ?: ${calificacion.servicioId}">—</span>
+                        </span>
+                        <span class="chip" th:if="${calificacion.proveedorId != null}">
+                            <strong>Proveedor</strong>
+                            <span th:text="${proveedorNombre} ?: ${calificacion.proveedorId}">—</span>
+                        </span>
+                    </div>
+                </div>
+                <a class="btn ghost" th:href="@{/}">Cancelar</a>
+            </div>
+
+            <div class="alert ok" th:if="${ok}" th:text="${ok}"></div>
+            <div class="alert" th:if="${error}" th:text="${error}"></div>
+
+            <form th:action="@{/calificaciones}" th:object="${calificacion}" method="post" style="margin-top:14px">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input type="hidden" th:field="*{servicioId}"/>
+                <input type="hidden" id="puntuacionField" th:field="*{puntuacion}"/>
+
+                <!-- Si proveedor ya viene, lo pasamos hidden -->
+                <input type="hidden" th:if="${calificacion.proveedorId != null}" th:field="*{proveedorId}"/>
+
+                <!-- Si proveedor no viene, mostramos combo -->
+                <div class="field" th:if="${calificacion.proveedorId == null}">
+                    <label class="subtle" for="proveedorId">Selecciona proveedor</label>
+                    <select id="proveedorId" th:field="*{proveedorId}" required>
+                        <option value="">-- Selecciona --</option>
+                        <option th:each="p : ${proveedores}"
+                                th:value="${p.idUsuario}"
+                                th:text="${p.nombreUsuario}">Proveedor</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label class="subtle" id="ratingLabel" for="ratingGroup">Puntuación (1–5)</label>
+                    <div id="ratingGroup" class="rating" role="radiogroup" aria-labelledby="ratingLabel">
+                        <button type="button" class="star-btn" data-value="1"><svg class="star" viewBox="0 0 24 24"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.53L12 17.98 6.12 20.6l1.12-6.53L2.5 9.42l6.58-.96L12 2.5z"/></svg></button>
+                        <button type="button" class="star-btn" data-value="2"><svg class="star" viewBox="0 0 24 24"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.53L12 17.98 6.12 20.6l1.12-6.53L2.5 9.42l6.58-.96L12 2.5z"/></svg></button>
+                        <button type="button" class="star-btn" data-value="3"><svg class="star" viewBox="0 0 24 24"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.53L12 17.98 6.12 20.6l1.12-6.53L2.5 9.42l6.58-.96L12 2.5z"/></svg></button>
+                        <button type="button" class="star-btn" data-value="4"><svg class="star" viewBox="0 0 24 24"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.53L12 17.98 6.12 20.6l1.12-6.53L2.5 9.42l6.58-.96L12 2.5z"/></svg></button>
+                        <button type="button" class="star-btn" data-value="5"><svg class="star" viewBox="0 0 24 24"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.53L12 17.98 6.12 20.6l1.12-6.53L2.5 9.42l6.58-.96L12 2.5z"/></svg></button>
+                        <span id="ratingHint" class="hint">Sin seleccionar</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="subtle" for="comentario">Comentario</label>
+                    <textarea id="comentario" th:field="*{comentario}" placeholder="¿Qué te gustó o qué se puede mejorar?"></textarea>
+                </div>
+
+                <div class="footer">
+                    <a class="btn ghost" th:href="@{/}">Cancelar</a>
+                    <button class="btn primary" type="submit">Publicar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>
+
+<script>
+    (function(){
+        const group = document.getElementById('ratingGroup');
+        const hint  = document.getElementById('ratingHint');
+        const input = document.getElementById('puntuacionField');
+        const labels = ["Muy mala","Mala","Regular","Buena","Excelente"];
+        let value = Number(input.value || 0);
+        let hover = 0;
+        const update = () => {
+            const fillUntil = hover || value;
+            const svgs   = group.querySelectorAll('.star');
+            svgs.forEach((svg, i) => svg.classList.toggle('filled', i < fillUntil));
+            hint.textContent = value ? `${value} ★ · ${labels[value-1]}` : 'Sin seleccionar';
+        };
+        group.addEventListener('mouseover', e => {
+            const btn = e.target.closest('.star-btn'); hover = btn ? Number(btn.dataset.value) : 0; update();
+        });
+        group.addEventListener('mouseleave', () => { hover = 0; update(); });
+        group.addEventListener('click', e => {
+            const btn = e.target.closest('.star-btn'); if(!btn) return;
+            value = Number(btn.dataset.value); input.value = value; update();
+        });
+        update();
+    })();
+</script>
+</body>
+</html>

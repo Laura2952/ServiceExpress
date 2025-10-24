@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Factura de pago</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{
+      --bg:#f6efe8; --ink:#2a201b; --muted:#7b6b63;
+      --card:#efe6db; --line:#e0d6cc; --brand:#c77462; --brand-2:#a45445;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial}
+    .wrap{max-width:980px;margin:40px auto;padding:0 18px}
+    .invoice{background:#fff;border:1px solid var(--line);border-radius:16px;
+      box-shadow:0 12px 28px rgba(0,0,0,.06);overflow:hidden}
+    .head{display:flex;justify-content:space-between;gap:16px;padding:22px 22px 10px;background:var(--card)}
+    .title{font-size:clamp(26px,3.4vw,34px);font-weight:800;margin:0}
+    .meta{color:var(--muted);font-weight:600}
+    .body{padding:18px 22px 10px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
+    .label{font-weight:800;margin-bottom:6px}
+    .muted{color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    thead th{background:var(--card);text-align:left;font-weight:800;padding:12px;border-bottom:1px solid var(--line)}
+    td{padding:12px;border-bottom:1px solid var(--line)}
+    tfoot td{padding:12px}
+    .right{text-align:right}
+    .total{font-weight:900;font-size:1.1rem}
+    .actions{display:flex;gap:10px;align-items:center;margin:18px 0 22px}
+    .btn{appearance:none;border:none;border-radius:12px;padding:10px 16px;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--brand);color:#fff}
+    .btn.primary:hover{background:var(--brand-2)}
+    .btn.link{background:transparent;border:1px solid var(--line);color:var(--brand-2);text-decoration:none}
+    .note{color:var(--muted);font-size:.92rem;margin:10px 2px 22px}
+    @media (max-width:700px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="invoice">
+    <div class="head">
+      <div>
+        <h1 class="title">Factura de pago</h1>
+        <div class="meta">
+          <span><strong>N° ref:</strong> <span th:text="${reference}">REF</span></span> ·
+          <span><strong>Moneda:</strong> <span th:text="${currency}">COP</span></span>
+        </div>
+      </div>
+      <div class="meta">
+        <div><strong>Fecha:</strong>
+          <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}">2025-09-08 21:10</span>
+        </div>
+        <div><strong>Expira:</strong> <span th:text="${expirationIso}">2025-09-09T02:00:00.000Z</span></div>
+      </div>
+    </div>
+
+    <div class="body">
+      <div class="grid">
+        <div class="card">
+          <div class="label">Proveedor</div>
+          <div>
+            <strong th:text="${solicitud.servicio.proveedor != null ? solicitud.servicio.proveedor.nombreUsuario : 'Sin asignar'}">Proveedor</strong><br>
+            <span class="muted">Servicio:</span>
+            <span th:text="${solicitud.servicio.nombre}">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label">Cliente</div>
+          <div>
+            <strong th:text="${solicitud.cliente != null ? solicitud.cliente.nombreUsuario : '—'}">Cliente</strong><br>
+            <span class="muted">Solicitud:</span>
+            <span th:text="${solicitud.idSolicitud}">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Detalle (tipo factura) ===== -->
+      <table>
+        <thead>
+        <tr>
+          <th>Descripción</th>
+          <th class="right">Cantidad</th>
+          <th class="right">Vlr. unitario</th>
+          <th class="right">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <div><strong th:text="${solicitud.servicio.nombre}">Servicio</strong></div>
+            <div class="muted" th:text="${solicitud.servicio.descripcion}">Descripción del servicio…</div>
+          </td>
+          <td class="right">1</td>
+          <td class="right">$<span th:text="${#numbers.formatInteger(baseInCents/100, 0)}">0</span> COP</td>
+          <td class="right">$<span th:text="${#numbers.formatInteger(baseInCents/100, 0)}">0</span> COP</td>
+        </tr>
+        <tr>
+          <td><strong>Domicilio</strong></td>
+          <td class="right">1</td>
+          <td class="right">$<span th:text="${#numbers.formatInteger(deliveryFeeCents/100, 0)}">0</span> COP</td>
+          <td class="right">$<span th:text="${#numbers.formatInteger(deliveryFeeCents/100, 0)}">0</span> COP</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="3" class="right"><strong>Subtotal</strong></td>
+          <td class="right">$<span th:text="${#numbers.formatInteger(baseInCents/100, 0)}">0</span> COP</td>
+        </tr>
+        <tr>
+          <td colspan="3" class="right"><strong>Impuestos</strong></td>
+          <td class="right">$0 COP</td>
+        </tr>
+        <tr>
+          <td colspan="3" class="right total">Total a pagar</td>
+          <td class="right total">$<span th:text="${#numbers.formatInteger(totalInCents/100, 0)}">0</span> COP</td>
+        </tr>
+        </tfoot>
+      </table>
+
+      <!-- ===== Checkout Wompi con el TOTAL ===== -->
+      <form class="actions" action="https://checkout.wompi.co/p/" method="GET">
+        <input type="hidden" name="public-key" th:value="${publicKey}"/>
+        <input type="hidden" name="currency" th:value="${currency}"/>
+        <!-- Enviamos el TOTAL (servicio + domicilio) -->
+        <input type="hidden" name="amount-in-cents" th:value="${totalInCents}"/>
+        <input type="hidden" name="reference" th:value="${reference}"/>
+        <input type="hidden" name="signature:integrity" th:value="${signature}"/>
+        <input type="hidden" name="expiration-time" th:value="${expirationIso}"/>
+        <input type="hidden" name="redirect-url" th:value="${redirectUrl}"/>
+
+        <button type="submit" class="btn primary">Pagar con Wompi</button>
+        <a th:href="@{/solicitud/historial}" class="btn link">Volver</a>
+      </form>
+
+      <div class="note">
+        El total incluye un cargo fijo por domicilio de $10.000 COP.
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

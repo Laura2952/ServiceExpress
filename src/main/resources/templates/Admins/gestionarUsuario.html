@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Gestión de Usuarios (Admin)</title>
+
+    <!-- Fuente Poppins para coherencia visual -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap y hoja global -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        :root{
+          /* Paleta terracota unificada */
+          --bg:#F8EDE3;         /* crema claro */
+          --tone-2:#DFD3C3;     /* crema medio */
+          --tone-3:#D0B8A8;     /* beige rosado */
+          --brand:#C5705D;      /* terracota */
+          --brand-600:#a85848;
+          --text:#3b2f2f;
+          --surface:#ffffff;
+          --ring:rgba(197,112,93,.35);
+          --line:#e6d7ce;
+        }
+
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+          background:var(--bg);
+          color:var(--text);
+          font-family:Poppins, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        /* ===== NAVBAR ===== */
+        .se-nav{
+          position:sticky; top:0; z-index:50;
+          background:linear-gradient(90deg, var(--bg), var(--tone-2));
+          border-bottom:1px solid var(--line);
+          backdrop-filter:saturate(1.1) blur(4px);
+        }
+        .se-nav .container{gap:12px}
+        .brand a{
+          font-weight:800; letter-spacing:.2px; text-decoration:none;
+          color:var(--brand-600); font-size:20px;
+        }
+        .se-chip{
+          background:var(--surface); border:1px solid var(--tone-2);
+          border-radius:999px; padding:.55rem .9rem;
+          box-shadow:0 6px 16px rgba(0,0,0,.06);
+        }
+        .form-control.se-chip{border-color:var(--tone-2)}
+        .form-control.se-chip:focus{
+          border-color:var(--brand) !important;
+          box-shadow:0 0 0 .25rem var(--ring) !important;
+        }
+        .btn-brand{
+          background:var(--brand); border-color:var(--brand); color:#fff;
+          border-radius:999px; padding:.55rem 1rem;
+        }
+        .btn-brand:hover{filter:brightness(.96); color:#fff}
+        .btn-ghost{
+          background:var(--surface); border:1px solid var(--tone-2); color:var(--text);
+          border-radius:999px; padding:.55rem 1rem;
+        }
+
+        /* ===== CONTENEDOR / CARDS ===== */
+        .se-card{
+          background:var(--surface);
+          border:1px solid var(--tone-2);
+          border-radius:18px;
+          padding:1.25rem 1.25rem .75rem;
+          box-shadow:0 10px 28px rgba(0,0,0,.06);
+        }
+
+        /* ===== TABLA ===== */
+        .table thead th{
+          background:var(--tone-2) !important;
+          color:#5a493f;
+          border-bottom-color:var(--tone-2) !important;
+          font-weight:800;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd){
+          --bs-table-accent-bg: rgba(208,184,168,.12);
+        }
+        .badge-role{
+          background:var(--tone-3);
+          color:#2c1f1a;
+          border:1px solid rgba(0,0,0,.04);
+          padding:.4rem .6rem;
+          border-radius:999px;
+          font-weight:700;
+        }
+
+        /* Modal */
+        .modal-backdrop.show{background:rgba(59,47,47,.55)}
+        .modal-content{border-radius:16px; overflow:hidden}
+        .modal-header{background:var(--tone-2); color:var(--text)}
+        .modal-body{background:var(--bg)}
+        .modal-footer{background:var(--bg)}
+
+        /* Ajustes pequeños */
+        .actions-gap{gap:.4rem}
+    </style>
+</head>
+
+<body>
+<!-- ===== NAV SUPERIOR ===== -->
+<nav class="se-nav py-3" role="navigation" aria-label="Principal">
+    <div class="container d-flex align-items-center">
+        <div class="brand">
+            <a th:href="@{/}">ServiExpress</a>
+        </div>
+
+        <!-- Buscador -->
+        <form class="flex-grow-1 ms-2 me-2" role="search" onsubmit="return false" aria-label="Buscar usuarios">
+            <input id="searchInput" type="search" class="form-control se-chip"
+                   placeholder="Buscar usuario, correo, rol…" autocomplete="off">
+        </form>
+
+        <div class="d-flex align-items-center actions-gap">
+            <a th:href="@{/Admins/servicios}" class="btn btn-ghost se-chip">Gestionar Servicios</a>
+            <a th:href="@{/Admins/usuarios/crear}" class="btn btn-brand se-chip">Crear usuario</a>
+
+            <!-- Logout (POST con CSRF) -->
+            <form th:action="@{/auth/logout}" method="post" class="m-0 p-0 ms-2">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-outline-danger se-chip" type="submit">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== CONTENIDO ===== -->
+<main class="container my-4">
+    <div class="d-flex align-items-end justify-content-between mb-3">
+        <h1 class="m-0 fw-bold" th:text="${title}">Gestión de Usuarios (Admin)</h1>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="se-card mb-3">
+        <div th:if="${mensajeExito}" class="alert alert-success mb-2" th:text="${mensajeExito}"></div>
+        <div th:if="${success}" class="alert alert-success mb-2" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger mb-0" th:text="${error}"></div>
+        <div th:if="${mensajeExito == null and success == null and error == null}" class="small text-muted">
+            Tip: usa el buscador para filtrar por correo o nombre.
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="se-card">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="usuario : ${Usuarios}">
+                    <td th:text="${usuario.idUsuario}">1</td>
+                    <td th:text="${usuario.nombreUsuario}">Nombre</td>
+                    <td th:text="${usuario.correo}">correo@dominio.com</td>
+                    <td>
+                        <span class="badge-role" th:text="${usuario.rol != null ? usuario.rol.rol : '—'}">—</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-1">
+                            <a th:href="@{'/Admins/usuarios/' + ${usuario.idUsuario} + '/editar'}"
+                               class="btn btn-warning btn-sm">Editar</a>
+
+                            <!-- Botón eliminar con modal -->
+                            <button type="button"
+                                    class="btn btn-danger btn-sm js-delete"
+                                    th:data-action="@{'/Admins/usuarios/' + ${usuario.idUsuario} + '/eliminar'}">
+                                Eliminar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(Usuarios)}" data-empty-row>
+                    <td colspan="5" class="text-center text-muted">No hay usuarios</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- Modal Confirmación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0">
+                <h5 id="confirmDeleteTitle" class="modal-title fw-bold">¿Eliminar usuario?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Esta acción no se puede deshacer. ¿Deseas continuar?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <!-- Form maestro para enviar el POST con CSRF -->
+                <form id="confirmDeleteForm" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn btn-brand text-white">Sí, eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (para el modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Filtro en vivo -->
+<script>
+    (function () {
+      const input = document.getElementById('searchInput');
+      const table = document.querySelector('table');
+      if (!input || !table) return;
+
+      const rows = table.querySelectorAll('tbody tr');
+      const normalize = s => (s || '').toString().toLowerCase()
+        .normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
+      function filter(q){
+        const nquery = normalize(q);
+        let anyVisible = false;
+
+        rows.forEach(row => {
+          const isEmptyRow = row.hasAttribute('data-empty-row');
+          if (isEmptyRow) return;
+
+          const cells = Array.from(row.querySelectorAll('td')).map(td => normalize(td.textContent));
+          const match = cells.some(text => text.includes(nquery));
+          row.style.display = match ? '' : 'none';
+          if (match) anyVisible = true;
+        });
+
+        const emptyRow = table.querySelector('tbody tr[data-empty-row]');
+        if (emptyRow) emptyRow.style.display = anyVisible ? 'none' : '';
+      }
+
+      input.addEventListener('input', e => filter(e.target.value));
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+    })();
+</script>
+
+<!-- JS del modal de eliminación -->
+<script>
+    (function(){
+      const modalEl = document.getElementById('confirmDeleteModal');
+      const form = document.getElementById('confirmDeleteForm');
+      if(!modalEl || !form) return;
+
+      const modal = new bootstrap.Modal(modalEl);
+
+      document.querySelectorAll('.js-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.getAttribute('data-action');
+          form.setAttribute('action', action);
+          modal.show();
+        });
+      });
+    })();
+</script>
+</body>
+</html>

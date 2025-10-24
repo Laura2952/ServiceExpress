@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>ServiExpress · Crear Servicio</title>
+
+    <!-- Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        :root{
+            --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1; --text:#3e2a2a; --muted:#7b5e57;
+            --brand:#c77462; --brand-600:#ba6b59; --brand-2:#a45445; --ring:#e9c9be;
+            --surface:#ffffff; --line:#efdfd7; --footer-bg:#e9dbd3; --footer-text:#5b4039;
+            --radius:14px;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{
+            height:100%;
+            margin:0;
+            font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+            background:linear-gradient(135deg,var(--bg1),var(--bg2));
+            color:var(--text);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:32px;
+        }
+
+        .form-wrapper{
+            background:var(--surface);
+            border:1px solid var(--line);
+            padding:32px;
+            border-radius:var(--radius);
+            box-shadow:0 10px 28px rgba(0,0,0,.08);
+            width:100%;
+            max-width:520px;
+            animation:fadeIn .5s ease;
+        }
+
+        .form-wrapper h1{
+            text-align:center;
+            margin:0 0 24px;
+            font-weight:700;
+            font-size:1.5rem;
+            color:var(--brand-2);
+        }
+
+        .form-group{margin-bottom:18px;display:grid;gap:6px}
+        .form-group label{font-weight:600;color:var(--text);font-size:.95rem}
+
+        .input-field,textarea,select{
+            width:100%;
+            padding:11px 13px;
+            border:1px solid var(--line);
+            border-radius:10px;
+            background:#fff;
+            color:var(--text);
+            font-size:15px;
+            transition:border-color .18s ease, box-shadow .18s ease;
+        }
+        .input-field:focus,textarea:focus,select:focus{
+            border-color:var(--brand);
+            box-shadow:0 0 0 4px var(--ring);
+            outline:none;
+        }
+        textarea{min-height:100px;resize:vertical}
+
+        .form-actions{
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            margin-top:22px;
+        }
+
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:11px 18px;
+            border-radius:12px;
+            font-weight:600;
+            font-size:14px;
+            text-decoration:none;
+            border:1px solid var(--brand);
+            color:var(--brand-2);
+            background:transparent;
+            transition:.18s ease;
+            cursor:pointer
+        }
+        .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(199,116,98,.18)}
+        .btn.filled{background:var(--brand);color:#fff;border-color:var(--brand)}
+        .btn.filled:hover{background:var(--brand-600)}
+        .btn.ghost{background:transparent;border-color:#d1b7af;color:#5a403a}
+
+        .alert{
+            padding:.8rem;
+            border-radius:var(--radius);
+            margin-bottom:1rem;
+            text-align:center;
+            font-weight:500;
+            font-size:14px;
+        }
+        .alert.success{background:#E8F3EA;color:#2a6a3b;border:1px solid #CFE6D2}
+        .alert.danger{background:#FDEBEC;color:#a8424a;border:1px solid #F6C9CD}
+
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    </style>
+</head>
+<body>
+<div class="form-wrapper">
+    <h1>Crear Nuevo Servicio</h1>
+
+    <!-- Mensajes flash -->
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert danger" th:text="${error}"></div>
+
+    <form th:action="@{/servicio/guardar}" method="post" th:object="${servicio}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required class="input-field">
+            <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="alert danger"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" th:field="*{descripcion}" required class="input-field"></textarea>
+            <p th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="alert danger"></p>
+        </div>
+
+        <div th:if="${rol == 'ADMIN'}" class="form-group">
+            <label for="proveedor">Proveedor:</label>
+            <select id="proveedor" name="proveedorId" required class="input-field">
+                <option value="" disabled selected>Seleccione un proveedor</option>
+                <option th:each="prov : ${proveedores}"
+                        th:value="${prov.idUsuario}"
+                        th:text="${prov.nombreUsuario}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" th:field="*{precio}" step="0.01" required class="input-field">
+            <p th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}" class="alert danger"></p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn filled">Guardar</button>
+            <a th:href="@{/servicio}" class="btn ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

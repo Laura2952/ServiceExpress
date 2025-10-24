@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Resultado de pago</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans";margin:40px;background:#F8EDE3;color:#4B3F36}
+        .card{max-width:760px;margin:0 auto;background:#DFD3C3;border:1px solid #D0B8A8;border-radius:16px;padding:24px;box-shadow:0 10px 20px rgba(0,0,0,.06)}
+        h2{margin:0 0 12px}
+        code{background:#fff;padding:2px 6px;border-radius:6px}
+        a.btn{display:inline-block;margin-top:12px;text-decoration:none;background:#C5705D;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700}
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Estamos procesando tu pago…</h2>
+    <p th:if="${wompiTxId}">ID de transacción Wompi: <code th:text="${wompiTxId}">NA</code></p>
+    <p>La confirmación definitiva llega por <strong>webhook</strong>. Puedes volver al inicio mientras tanto.</p>
+    <a th:href="@{/}" class="btn">Volver al inicio</a>
+</div>
+</body>
+</html>

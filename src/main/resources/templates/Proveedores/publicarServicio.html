@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Publicar Servicio</title>
+</head>
+<body>
+<h1>Publicar Servicio</h1>
+
+<!-- Mensajes flash -->
+<div th:if="${success}" style="color: green;">
+  <p th:text="${success}"></p>
+</div>
+<div th:if="${error}" style="color: red;">
+  <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{|/Proveedores/${idProveedor}/publicarServicio|}"
+      th:object="${servicio}" method="post">
+
+  <label for="nombre">Nombre:</label>
+  <input type="text" id="nombre" th:field="*{nombre}" required/><br/><br/>
+
+  <label for="descripcion">Descripción:</label>
+  <textarea id="descripcion" th:field="*{descripcion}" required></textarea><br/><br/>
+
+  <label for="precio">Precio:</label>
+  <input type="number" step="0.01" id="precio" th:field="*{precio}" required/><br/><br/>
+
+  <label for="estado">Estado:</label>
+  <select id="estado" th:field="*{estado}">
+    <option th:each="estado : ${T(com.usta.serviexpress.Entity.ServicioEntity.EstadoServicio).values()}"
+            th:value="${estado}" th:text="${estado}">
+    </option>
+  </select><br/><br/>
+
+  <button type="submit">Publicar</button>
+</form>
+
+</body>
+</html>

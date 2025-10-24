@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Servicios solicitados</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Fuente unificada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1;
+            --text:#2b2320; --muted:#7b5e57;
+            --brand:#c77462; --brand-2:#a45445; --brand-600:#ba6b59;
+            --surface:#ffffff; --line:#eadfd9; --ring:#e9c9be;
+            --ok:#155b2f; --ok-bg:#e9f8ef;
+            --info:#245bb3; --info-bg:#eef3ff;
+            --warn:#8b5e00; --warn-bg:#fff7e8;
+            --success:#0f5f42; --success-bg:#e6f7ee;
+            --radius:16px;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0; background:var(--page); color:var(--text);
+            font-family:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,"Noto Sans",sans-serif
+        }
+
+        /* NAVBAR (unificada) */
+        .navbar{
+            position:sticky; top:0; z-index:50;
+            background:linear-gradient(90deg,var(--bg1),var(--bg2));
+            border-bottom:1px solid var(--line);
+            backdrop-filter:saturate(1.15) blur(6px);
+        }
+        .navbar .inner{
+            max-width:1200px; margin:0 auto; padding:10px 16px;
+            display:flex; align-items:center; gap:14px;
+        }
+        .brand{
+            font-weight:800; letter-spacing:.2px; color:var(--brand-2);
+        }
+        .brand a{ color:inherit; text-decoration:none; font-size:20px }
+        .nav-actions{ margin-left:auto; display:flex; gap:10px; align-items:center }
+        .btn{
+            display:inline-flex; align-items:center; justify-content:center; gap:8px;
+            padding:9px 16px; border-radius:14px; font-weight:700; font-size:14px;
+            border:1px solid var(--brand); color:var(--brand-2); background:transparent;
+            transition:.18s ease; text-decoration:none; cursor:pointer;
+        }
+        .btn:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(199,116,98,.18) }
+        .btn.primary{ background:var(--brand); color:#fff }
+        .btn.primary:hover{ background:var(--brand-600) }
+        .btn.secondary{ background:#95a5a6; border-color:#95a5a6; color:#fff }
+        .btn.secondary:hover{ background:#7f8c8d }
+        .btn.disabled{ opacity:.5; pointer-events:none }
+        .btn.pill{ border-radius:999px }
+
+        /* Layout */
+        .container{ max-width:1100px; margin:28px auto 40px; padding:0 16px }
+        h1{ margin:8px 0 18px; font-size:clamp(22px,3.2vw,32px) }
+
+        /* Tabla */
+        .table-wrap{
+            background:var(--surface); border:1px solid var(--line);
+            border-radius:var(--radius); box-shadow:0 20px 40px rgba(0,0,0,.06);
+            overflow:hidden;
+        }
+        .table-scroll{ overflow-x:auto }
+        table{ width:100%; min-width:1100px; border-collapse:collapse }
+        thead th{
+            background:#fbeae0; text-align:left; padding:12px 14px;
+            font-weight:800; color:#563d37; white-space:nowrap; position:sticky; top:0; z-index:2;
+        }
+        tbody td{ padding:12px 14px; border-top:1px solid var(--line) }
+        tbody tr:nth-child(even){ background:#fffdfc }
+        tbody tr:hover{ background:#fff8f4 }
+        .truncate{ max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+        .price{ white-space:nowrap; font-weight:800 }
+
+        /* Estado (pills) */
+        .pill{
+            display:inline-flex; align-items:center; gap:8px;
+            padding:6px 10px; border-radius:999px; font-weight:800; font-size:.875rem;
+            border:1px solid var(--line); background:#faf7f5; color:var(--muted)
+        }
+        .pill[data-status="PENDIENTE"]{ background:var(--warn-bg); color:var(--warn) }
+        .pill[data-status="PAGO_EN_PROCESO"]{ background:var(--info-bg); color:var(--info) }
+        .pill[data-status="PAGO_ACEPTADO"]{ background:var(--ok-bg); color:var(--ok) }
+        .pill[data-status="EN PROCESO"]{ background:#fff7f4; color:#a3432c }
+        .pill[data-status="FINALIZADO"]{ background:var(--success-bg); color:var(--success) }
+
+        /* Columna acciones sticky a la derecha */
+        th.sticky-actions, td.sticky-actions{
+            position:sticky; right:0; background:#fff; z-index:3; text-align:center;
+            box-shadow:-6px 0 8px rgba(0,0,0,.04);
+        }
+        thead th.sticky-actions{ background:#fbeae0 }
+
+        /* MODAL */
+        .modal{
+            display:none; position:fixed; inset:0; z-index:2147483647;
+            background:rgba(0,0,0,.45); align-items:center; justify-content:center;
+            padding:16px;
+        }
+        .modal.on{ display:flex }
+        .sheet{
+            background:#fff; width:min(92vw,480px); border-radius:18px; overflow:hidden;
+            border:1px solid var(--line); box-shadow:0 40px 60px rgba(0,0,0,.18)
+        }
+        .sheet header{
+            padding:16px 18px; font-weight:900; color:#4a2e2e;
+            background:linear-gradient(90deg,var(--bg1),var(--bg2));
+            border-bottom:1px solid var(--line);
+        }
+        .sheet .body{ padding:18px }
+        .field{ display:grid; gap:8px; margin:8px 0 12px }
+        label{ font-weight:700; color:#5a4c46 }
+        .input, .select{
+            width:100%; padding:10px 12px; border-radius:12px; font:inherit; background:#fff;
+            border:1px solid var(--line); outline:0;
+        }
+        .input:focus, .select:focus{
+            border-color:var(--ring); box-shadow:0 0 0 4px #ead3ca; outline:0;
+        }
+        .row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center }
+        .hr{ height:1px; background:var(--line); margin:14px 0 }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" role="navigation" aria-label="Principal">
+    <div class="inner">
+        <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
+        <div class="nav-actions">
+            <a th:href="@{/servicio}" class="btn pill">🚀 Ir a Servicios</a>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="container">
+    <h1>Servicios solicitados</h1>
+
+    <div class="table-wrap">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Fecha</th>
+                    <th>Dirección</th>
+                    <th>Fecha estimada</th>
+                    <th>Estado</th>
+                    <th>Especificaciones</th>
+                    <th class="sticky-actions">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="solicitud : ${solicitudesProveedor}">
+                    <td class="truncate" th:text="${solicitud.cliente.nombreUsuario}">Cliente</td>
+                    <td class="truncate" th:text="${solicitud.servicio.nombre}">Servicio</td>
+                    <td class="truncate" th:text="${solicitud.servicio.descripcion}">Descripción</td>
+                    <td class="price">$ <span th:text="${solicitud.servicio.precio}">0</span></td>
+                    <td th:text="${solicitud.fechaSolicitud}">—</td>
+                    <td class="truncate" th:text="${solicitud.direccionEntrega}">—</td>
+                    <td th:text="${solicitud.fechaEstimada}">—</td>
+                    <td><span class="pill" th:attr="data-status=${solicitud.estado}" th:text="${solicitud.estado}">ESTADO</span></td>
+                    <td class="truncate" th:text="${solicitud.detalles}">—</td>
+
+                    <td class="sticky-actions">
+                        <div class="row">
+                            <!-- ADMIN: aceptar/rechazar si está en PAGO_EN_PROCESO -->
+                            <form th:if="${isAdmin and #strings.equalsIgnoreCase(solicitud.estado,'PAGO_EN_PROCESO')}"
+                                  th:action="@{'/solicitud/admin/estado/' + ${solicitud.idSolicitud}}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="estado" value="PAGO_ACEPTADO"/>
+                                <button type="submit" class="btn primary">✅ Aceptar</button>
+                            </form>
+                            <form th:if="${isAdmin and #strings.equalsIgnoreCase(solicitud.estado,'PAGO_EN_PROCESO')}"
+                                  th:action="@{'/solicitud/admin/estado/' + ${solicitud.idSolicitud}}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="estado" value="PAGO_RECHAZADO"/>
+                                <button type="submit" class="btn secondary">❌ Rechazar</button>
+                            </form>
+
+                            <!-- PROVEEDOR: Editar si pago aceptado o en proceso -->
+                            <button type="button" class="btn primary"
+                                    th:if="${isProveedor and
+                                  (#strings.equalsIgnoreCase(solicitud.estado,'PAGO_ACEPTADO')
+                                   or #strings.equalsIgnoreCase(solicitud.estado,'EN PROCESO'))}"
+                                    th:onclick="'abrirModalProv(' + ${solicitud.idSolicitud} + ')'">
+                                Editar servicio
+                            </button>
+
+                            <!-- Sin acción disponible -->
+                            <span class="btn disabled"
+                                  th:if="${!(isProveedor and
+                                   (#strings.equalsIgnoreCase(solicitud.estado,'PAGO_ACEPTADO')
+                                    or #strings.equalsIgnoreCase(solicitud.estado,'EN PROCESO')))
+                                 and !(isAdmin and #strings.equalsIgnoreCase(solicitud.estado,'PAGO_EN_PROCESO'))}">
+                    —
+                  </span>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(solicitudesProveedor)}">
+                    <td colspan="10" style="text-align:center; padding:20px">No tienes servicios solicitados todavía</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODALES (uno por fila que califica, fuera de la tabla) -->
+<div th:each="solicitud : ${solicitudesProveedor}"
+     th:id="'modal-prov-' + ${solicitud.idSolicitud}" class="modal"
+     role="dialog" aria-modal="true" aria-label="Editar servicio"
+     onclick="this.classList.remove('on')"
+     th:if="${isProveedor and
+               (#strings.equalsIgnoreCase(solicitud.estado,'PAGO_ACEPTADO')
+                or #strings.equalsIgnoreCase(solicitud.estado,'EN PROCESO'))}">
+    <div class="sheet" onclick="event.stopPropagation()">
+        <header>Editar servicio</header>
+        <div class="body">
+            <form th:action="@{'/solicitud/proveedor/estado/' + ${solicitud.idSolicitud}}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="field">
+                    <label th:for="'estado-prov-' + ${solicitud.idSolicitud}">Estado</label>
+                    <select class="select" name="estado" required th:id="'estado-prov-' + ${solicitud.idSolicitud}">
+                        <option value="EN PROCESO" th:selected="${#strings.equalsIgnoreCase(solicitud.estado,'EN PROCESO')}">En Proceso</option>
+                        <option value="FINALIZADO" th:selected="${#strings.equalsIgnoreCase(solicitud.estado,'FINALIZADO')}">Finalizado</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label th:for="'fechaEstimada-prov-' + ${solicitud.idSolicitud}">Fecha estimada (opcional)</label>
+                    <input class="input" type="date" name="fechaEstimada"
+                           th:id="'fechaEstimada-prov-' + ${solicitud.idSolicitud}"
+                           th:value="${solicitud.fechaEstimada}">
+                </div>
+
+                <div class="row">
+                    <button type="submit" class="btn primary">Guardar</button>
+                    <button type="button" class="btn" th:onclick="'cerrarModalProv(' + ${solicitud.idSolicitud} + ')'">Cerrar</button>
+                </div>
+            </form>
+
+            <div class="hr"></div>
+            <div class="row" style="opacity:.75">
+                <small>Disponible cuando el pago fue aceptado o el servicio está en proceso.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function abrirModalProv(id){
+        const el = document.getElementById('modal-prov-'+id);
+        if(el) el.classList.add('on');
+    }
+    function cerrarModalProv(id){
+        const el = document.getElementById('modal-prov-'+id);
+        if(el) el.classList.remove('on');
+    }
+    document.addEventListener('keydown', e => {
+        if(e.key === 'Escape') document.querySelectorAll('.modal.on')
+            .forEach(m => m.classList.remove('on'));
+    });
+</script>
+</body>
+</html>

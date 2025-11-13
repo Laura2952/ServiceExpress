@@ -1,114 +1,116 @@
-<!-- Documento HTML que define la estructura de la página de registro -->
-<!-- HTML document defining the structure of the registration page -->
+<!-- Registration Page HTML Template -->
+<!-- Purpose:
+     - Provides a user interface for new users to create an account on ServiExpress.
+     - Handles input fields, validation error display, CSRF protection, and password visibility toggling.
+     - Uses Thymeleaf for server-side template rendering. -->
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Metadatos del documento y enlace a los estilos -->
-    <!-- Document metadata and stylesheet link -->
+    <!-- Document metadata and linked stylesheet -->
     <meta charset="utf-8">
     <title>Crear cuenta</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
-    <!-- Estilos internos para la página -->
-    <!-- Internal styles for the page -->
+    <!-- Internal CSS for registration page styling -->
     <style>
-        /* Variables de color para el tema */
-        /* Color variables for the theme */
+        /* ===================== THEME COLORS ===================== */
+        /* Define color variables for the page theme */
         :root { --bg:#f6ece3; --card:#fff; --stroke:#ead8ce; --text:#2b2b2b; --muted:#9a7d72; --brand:#c77462; }
 
-        /* Configuración de caja y estilo global */
-        /* Box model and global style setup */
-        *{box-sizing:border-box}
+        /* ===================== GLOBAL STYLES ===================== */
+        *{box-sizing:border-box} /* Box model configuration for all elements */
 
-        /* Estilo principal del cuerpo del documento */
-        /* Main body style */
-        body{min-height:100vh;margin:0;display:grid;place-items:center;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;color:var(--text)}
+        /* Main body styling: full viewport height, centered content, default font */
+        body{
+            min-height:100vh;
+            margin:0;
+            display:grid;
+            place-items:center;
+            background:var(--bg);
+            font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+            color:var(--text);
+        }
 
-        /* Estilo de la tarjeta principal */
-        /* Main card style */
-        .card{width:min(560px,94vw);background:var(--card);border:1px solid var(--stroke);border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.06)}
+        /* ===================== CARD STYLING ===================== */
+        /* Main card container */
+        .card{
+            width:min(560px,94vw); /* Responsive width */
+            background:var(--card);
+            border:1px solid var(--stroke);
+            border-radius:16px;
+            box-shadow:0 12px 28px rgba(0,0,0,.06);
+        }
+        .body{padding:28px} /* Inner padding for content inside card */
+        h1{margin:0 0 10px} /* Main heading spacing */
 
-        /* Cuerpo interno de la tarjeta */
-        /* Inner body of the card */
-        .body{padding:28px}
+        /* ===================== FORM ELEMENTS ===================== */
+        .group{margin:14px 0} /* Spacing between input fields */
+        label{font-weight:600;display:block;margin:0 0 6px} /* Labels styling */
+        input{
+            width:100%;
+            padding:12px 14px;
+            border:1px solid #dec6bb;
+            border-radius:12px;
+            font-size:1rem;
+        }
 
-        /* Título principal */
-        /* Main heading */
-        h1{margin:0 0 10px}
+        /* ===================== ROW LAYOUT ===================== */
+        .row{display:flex;gap:12px;margin-top:14px} /* Horizontal layout for multiple fields */
+        .row.two > *{flex:1} /* Equal width for two-column layouts */
 
-        /* Espaciado de grupos de campos */
-        /* Field group spacing */
-        .group{margin:14px 0}
+        /* ===================== BUTTONS ===================== */
+        .btn{
+            border-radius:12px;
+            padding:12px 16px;
+            font-weight:700;
+            border:1px solid var(--brand);
+            cursor:pointer;
+        }
+        .btn.primary{background:var(--brand);color:#fff} /* Primary action button */
+        .btn.ghost{background:transparent;color:var(--brand)} /* Secondary/ghost button */
 
-        /* Estilo de etiquetas */
-        /* Label style */
-        label{font-weight:600;display:block;margin:0 0 6px}
+        /* ===================== ERROR MESSAGES ===================== */
+        .error{color:#8b1a1a;font-size:.9rem;margin-top:6px} /* Field-level validation errors */
+        .alert{
+            padding:12px 14px;
+            border-radius:12px;
+            margin:10px 0;
+            background:#fde8e8;
+            border:1px solid #f4b4b4;
+            color:#8b1a1a;
+        } /* Global validation errors container */
 
-        /* Estilo de los campos de entrada */
-        /* Input field style */
-        input{width:100%;padding:12px 14px;border:1px solid #dec6bb;border-radius:12px;font-size:1rem}
-
-        /* Configuración de filas flexibles */
-        /* Flexible row layout */
-        .row{display:flex;gap:12px;margin-top:14px}
-
-        /* Distribución equitativa de columnas */
-        /* Equal distribution of columns */
-        .row.two > *{flex:1}
-
-        /* Estilos de los botones */
-        /* Button styles */
-        .btn{border-radius:12px;padding:12px 16px;font-weight:700;border:1px solid var(--brand);cursor:pointer}
-
-        /* Botón principal */
-        /* Primary button */
-        .btn.primary{background:var(--brand);color:#fff}
-
-        /* Botón de tipo fantasma (sin fondo) */
-        /* Ghost button (transparent background) */
-        .btn.ghost{background:transparent;color:var(--brand)}
-
-        /* Texto de error */
-        /* Error text */
-        .error{color:#8b1a1a;font-size:.9rem;margin-top:6px}
-
-        /* Mensaje de alerta general */
-        /* General alert message */
-        .alert{padding:12px 14px;border-radius:12px;margin:10px 0;background:#fde8e8;border:1px solid #f4b4b4;color:#8b1a1a}
-
-        /* Icono de mostrar/ocultar contraseña */
-        /* Show/hide password icon */
-        .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.9rem;color:var(--muted)}
-
-        /* Contenedor relativo para el campo de contraseña */
-        /* Relative container for password field */
-        .pw-wrap{position:relative}
+        /* ===================== PASSWORD TOGGLE ===================== */
+        .pw-toggle{
+            position:absolute;
+            right:12px;
+            top:50%;
+            transform:translateY(-50%);
+            cursor:pointer;
+            font-size:.9rem;
+            color:var(--muted);
+        } /* Icon/button to toggle password visibility */
+        .pw-wrap{position:relative} /* Container to position toggle icon relative to input */
     </style>
 </head>
 
 <body>
-<!-- Contenedor principal de la tarjeta -->
-<!-- Main card container -->
+<!-- ===================== MAIN CARD ===================== -->
 <div class="card">
     <div class="body">
-        <!-- Título de la página -->
         <!-- Page title -->
         <h1>Crear cuenta</h1>
-
-        <!-- Descripción breve -->
-        <!-- Short description -->
+        <!-- Short description for the user -->
         <p style="color:var(--muted);margin-top:0">Regístrate para empezar a usar ServiExpress.</p>
 
-        <!-- Resumen de errores globales -->
-        <!-- Global error summary -->
+        <!-- ===================== GLOBAL FORM ERRORS ===================== -->
         <div class="alert" th:if="${#fields.hasGlobalErrors()}"
              th:each="e : ${#fields.globalErrors()}" th:text="${e}">Hay errores en el formulario.</div>
+        <!-- Displays any server-side or form-wide validation errors -->
 
-        <!-- Formulario de registro -->
-        <!-- Registration form -->
+        <!-- ===================== REGISTRATION FORM ===================== -->
         <form th:action="@{/auth/registro}" th:object="${form}" method="post" novalidate>
 
-            <!-- Campo: Nombre -->
             <!-- Field: Name -->
             <div class="group">
                 <label for="nombreUsuario">Nombre</label>
@@ -117,7 +119,6 @@
                 <div class="error" th:if="${#fields.hasErrors('nombreUsuario')}" th:errors="*{nombreUsuario}"></div>
             </div>
 
-            <!-- Campo: Correo electrónico -->
             <!-- Field: Email -->
             <div class="group">
                 <label for="correo">Correo</label>
@@ -126,11 +127,8 @@
                 <div class="error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
             </div>
 
-            <!-- Fila con dos columnas: Teléfono y Ciudad -->
             <!-- Row with two columns: Phone and City -->
             <div class="row two">
-
-                <!-- Campo: Teléfono -->
                 <!-- Field: Phone -->
                 <div class="group">
                     <label for="telefono">Teléfono</label>
@@ -139,7 +137,6 @@
                     <div class="error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
                 </div>
 
-                <!-- Campo: Ciudad -->
                 <!-- Field: City -->
                 <div class="group">
                     <label for="ciudad">Ciudad</label>
@@ -149,7 +146,6 @@
                 </div>
             </div>
 
-            <!-- Campo: Contraseña -->
             <!-- Field: Password -->
             <div class="group">
                 <label for="password">Contraseña</label>
@@ -157,12 +153,12 @@
                     <input id="password" type="password" th:field="*{password}" minlength="6" maxlength="120"
                            autocomplete="new-password" required>
                     <span class="pw-toggle" data-target="password">mostrar</span>
+                    <!-- Toggle password visibility -->
                 </div>
                 <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
             </div>
 
-            <!-- Campo: Confirmar contraseña -->
-            <!-- Field: Confirm password -->
+            <!-- Field: Confirm Password -->
             <div class="group">
                 <label for="confirmarPassword">Confirmar contraseña</label>
                 <div class="pw-wrap">
@@ -173,34 +169,39 @@
                 <div class="error" th:if="${#fields.hasErrors('confirmarPassword')}" th:errors="*{confirmarPassword}"></div>
             </div>
 
-            <!-- Token CSRF de seguridad -->
             <!-- CSRF security token -->
             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-            <!-- Botones de acción -->
             <!-- Action buttons -->
             <div class="row">
                 <a class="btn ghost" th:href="@{/auth/login}">Ya tengo cuenta</a>
+                <!-- Link to login page for existing users -->
                 <button class="btn primary" type="submit">Crear cuenta</button>
+                <!-- Submit registration form -->
             </div>
         </form>
     </div>
 </div>
 
-<!-- Script para alternar la visibilidad de contraseñas -->
-<!-- Script to toggle password visibility -->
+<!-- ===================== PASSWORD TOGGLE SCRIPT ===================== -->
 <script>
+    /* Script to toggle visibility for password and confirm password fields */
     document.querySelectorAll('.pw-toggle').forEach(t => {
-        // Escucha el clic en el icono
-        // Listen for click on the icon
         t.addEventListener('click', () => {
-            const id = t.getAttribute('data-target'); // Obtiene el id del input
+            const id = t.getAttribute('data-target'); // Target input field ID
             const input = document.getElementById(id);
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             input.setAttribute('type', type);
-            t.textContent = type === 'password' ? 'mostrar' : 'ocultar'; // Cambia el texto
+            t.textContent = type === 'password' ? 'mostrar' : 'ocultar'; // Update toggle text
         });
     });
 </script>
 </body>
 </html>
+
+<!-- Technical Summary:
+This HTML file defines the registration page for ServiExpress. It provides a card-based form layout
+with fields for name, email, phone, city, password, and password confirmation. Server-side and field-level
+validation messages are displayed. The password fields have a toggle feature for visibility. CSRF protection
+is included via a hidden input. Thymeleaf is used for template rendering and form binding.
+-->

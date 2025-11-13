@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Publicar Servicio</title>
+    <title>Publicar Servicio</title>
+    <!-- ===================================================== -->
+    <!-- Technical comments: This template renders a form for providers -->
+    <!-- to create a new service in the ServiExpress platform. -->
+    <!-- Thymeleaf is used for binding form fields and handling flash messages. -->
+    <!-- ===================================================== -->
 </head>
 <body>
+
+<!-- Main page header -->
 <h1>Publicar Servicio</h1>
 
-<!-- Mensajes flash -->
+<!-- ===================== FLASH MESSAGES ===================== -->
+<!-- Purpose: Display success or error feedback to the user after form submission -->
+<!-- 'success' is green, 'error' is red -->
 <div th:if="${success}" style="color: green;">
-  <p th:text="${success}"></p>
+    <p th:text="${success}"></p>
 </div>
 <div th:if="${error}" style="color: red;">
-  <p th:text="${error}"></p>
+    <p th:text="${error}"></p>
 </div>
 
+<!-- ===================== SERVICE FORM ===================== -->
+<!-- Purpose: Form to create a new service -->
+<!-- Bound to 'servicio' object using Thymeleaf th:object -->
+<!-- Form submits via POST to the provider's service publishing endpoint -->
 <form th:action="@{|/Proveedores/${idProveedor}/publicarServicio|}"
       th:object="${servicio}" method="post">
 
-  <label for="nombre">Nombre:</label>
-  <input type="text" id="nombre" th:field="*{nombre}" required/><br/><br/>
+    <!-- Service name input -->
+    <!-- Required field, bound to 'nombre' property -->
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" th:field="*{nombre}" required/><br/><br/>
 
-  <label for="descripcion">Descripción:</label>
-  <textarea id="descripcion" th:field="*{descripcion}" required></textarea><br/><br/>
+    <!-- Service description textarea -->
+    <!-- Required field, bound to 'descripcion' property -->
+    <label for="descripcion">Descripción:</label>
+    <textarea id="descripcion" th:field="*{descripcion}" required></textarea><br/><br/>
 
-  <label for="precio">Precio:</label>
-  <input type="number" step="0.01" id="precio" th:field="*{precio}" required/><br/><br/>
+    <!-- Service price input -->
+    <!-- Number input with decimal step, bound to 'precio' property -->
+    <label for="precio">Precio:</label>
+    <input type="number" step="0.01" id="precio" th:field="*{precio}" required/><br/><br/>
 
-  <label for="estado">Estado:</label>
-  <select id="estado" th:field="*{estado}">
-    <option th:each="estado : ${T(com.usta.serviexpress.Entity.ServicioEntity.EstadoServicio).values()}"
-            th:value="${estado}" th:text="${estado}">
-    </option>
-  </select><br/><br/>
+    <!-- Service status selection -->
+    <!-- Populated dynamically from ServicioEntity.EstadoServicio enum -->
+    <!-- Bound to 'estado' property of the form object -->
+    <label for="estado">Estado:</label>
+    <select id="estado" th:field="*{estado}">
+        <option th:each="estado : ${T(com.usta.serviexpress.Entity.ServicioEntity.EstadoServicio).values()}"
+                th:value="${estado}" th:text="${estado}">
+        </option>
+    </select><br/><br/>
 
-  <button type="submit">Publicar</button>
+    <!-- Submit button -->
+    <!-- Sends form data to the POST endpoint -->
+    <button type="submit">Publicar</button>
 </form>
 
 </body>
 </html>
+
+<!-- ===================================================== -->
+<!-- Summary (Technical Note):
+This HTML template allows a provider to publish a new service in ServiExpress.
+- Uses Thymeleaf for form binding to a 'servicio' object.
+- Includes flash message sections for 'success' and 'error'.
+- Input fields: name (nombre), description (descripcion), price (precio), status (estado).
+- Status options are dynamically loaded from the ServicioEntity.EstadoServicio enum.
+- Form submission is POSTed to the provider-specific service publishing endpoint.
+-->

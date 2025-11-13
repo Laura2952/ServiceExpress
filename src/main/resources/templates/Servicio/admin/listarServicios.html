@@ -1,4 +1,6 @@
+<!-- ===================================================== -->
 <!-- Página de servicios disponibles / Available Services Page -->
+<!-- ===================================================== -->
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -19,7 +21,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
     <style>
+        /* ===================================================== */
         /* Paleta de colores y variables / Color palette and variables */
+        /* ===================================================== */
         :root{
             --bg:#F8EDE3; --tone-2:#DFD3C3; --tone-3:#D0B8A8; --brand:#C5705D;
             --brand-600:#a85848; --text:#3b2f2f; --surface:#ffffff; --ring:rgba(197,112,93,.35);
@@ -257,3 +261,13 @@
 
 </body>
 </html>
+
+<!-- ===================================================== -->
+<!-- Resumen técnico / Technical Summary:
+- Este HTML muestra la lista de servicios disponibles con filtrado en tiempo real.
+- Integra Thymeleaf para mostrar dinámicamente los servicios desde el servidor.
+- Botones de acción varían según el rol del usuario (ADMIN, PROVEEDOR, CLIENTE).
+- Modal de confirmación para eliminar servicios.
+- CSRF token incluido para seguridad con Spring Security.
+- Uso de Bootstrap y estilos personalizados para diseño moderno y responsivo.
+-->

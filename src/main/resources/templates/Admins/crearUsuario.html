@@ -1,39 +1,59 @@
+<!-- ==================================================
+ServiExpress · CREAR USUARIO
+Formulario de administración para crear un nuevo usuario
+================================================== -->
+
+<!-- ==================================================
+ServiExpress · CREATE USER
+Admin form for creating a new user
+================================================== -->
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
+    <!-- Configuración de meta y título -->
+    <!-- Meta and title configuration -->
     <meta charset="UTF-8">
     <title th:text="${title} ?: 'Crear Usuario'">Crear Usuario</title>
 
-    <!-- Carga de fuentes y framework Bootstrap -->
+    <!-- Carga de fuentes externas y Bootstrap -->
+    <!-- External fonts and Bootstrap load -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
-    <!-- Hoja de estilos adicional del proyecto -->
+    <!-- Hoja de estilos del proyecto -->
+    <!-- Project-specific stylesheet -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
     <style>
-        /* ===== Paleta de colores del diseño ===== */
+        /* ===== Variables y paleta de colores ===== */
+        /* ===== Variables and color palette ===== */
         :root{
             --bg:#F8EDE3; --tone-2:#DFD3C3; --tone-3:#D0B8A8; --brand:#C5705D; --brand-600:#a85848;
             --text:#3b2f2f; --surface:#ffffff; --ring:rgba(197,112,93,.35); --line:#e6d7ce;
         }
 
-        /* Reset de box-sizing */
+        /* Reset global box-sizing */
+        /* Global box-sizing reset */
         *{box-sizing:border-box}
 
-        /* Altura total de la página */
+        /* Altura total de página */
+        /* Full page height */
         html,body{height:100%}
 
-        /* Estilos base del cuerpo */
+        /* Estilos base de body */
+        /* Base body styles */
         body{
             background:var(--bg); color:var(--text);
             font-family:Poppins, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
-        /* ===== NAVBAR ===== */
+        /* ===== Navbar superior ===== */
+        /* ===== Top navigation bar ===== */
         .se-nav{
             position:sticky; top:0; z-index:50;
             background:linear-gradient(90deg,var(--bg),var(--tone-2));
@@ -41,55 +61,66 @@
             backdrop-filter:saturate(1.1) blur(4px);
         }
 
-        /* Marca del sitio */
+        /* Marca / logo */
+        /* Brand / logo */
         .se-brand{
             color:var(--brand-600)!important; font-weight:800; text-decoration:none; letter-spacing:.2px; font-size:20px;
         }
 
-        /* Chip estilizado para botones */
+        /* Chip para botones */
+        /* Styled chip buttons */
         .se-chip{
             background:var(--surface); border:1px solid var(--tone-2); border-radius:999px; padding:.55rem .95rem;
             box-shadow:0 6px 16px rgba(0,0,0,.06); font-weight:700;
         }
 
         /* Botones personalizados */
+        /* Custom buttons */
         .btn-ghost{ background:var(--surface); border:1px solid var(--tone-2); color:var(--text); }
         .btn-brand{ background:var(--brand); border-color:var(--brand); color:#fff; }
         .btn-brand:hover{ filter:brightness(.96); color:#fff; }
 
-        /* Efecto de foco en campos de formulario */
+        /* Efecto focus en inputs */
+        /* Focus effect for form inputs */
         .form-control:focus, .form-select:focus{
             border-color:var(--brand)!important; box-shadow:0 0 0 .25rem var(--ring)!important;
         }
 
-        /* ===== TARJETAS ===== */
+        /* ===== Tarjetas / Cards ===== */
+        /* ===== Cards styling ===== */
         .se-card{
             background:var(--surface); border:1px solid var(--tone-2); border-radius:18px;
             box-shadow:0 12px 28px rgba(0,0,0,.06); padding:1.5rem;
         }
 
-        /* Estilo de títulos */
+        /* Títulos dentro de formularios o secciones */
+        /* Titles inside forms or sections */
         .se-title{ font-weight:800; letter-spacing:.3px; }
 
-        /* Texto auxiliar */
+        /* Texto de ayuda o hints */
+        /* Helper text / hints */
         .hint{ color:#6b5c56; font-size:.9rem; }
     </style>
 </head>
-<body>
 
-<!-- ===== Barra de navegación superior ===== -->
+<body>
+<!-- ===== Navbar principal ===== -->
+<!-- ===== Main navigation bar ===== -->
 <nav class="se-nav py-3" role="navigation" aria-label="Principal">
     <div class="container d-flex align-items-center justify-content-between gap-3">
-        <!-- Nombre del sistema -->
+        <!-- Logo / Nombre del sistema -->
+        <!-- Logo / System name -->
         <a class="se-brand" th:href="@{/}">ServiExpress</a>
 
-        <!-- Botones de navegación -->
+        <!-- Botones de administración y logout -->
+        <!-- Admin buttons and logout -->
         <div class="d-flex align-items-center gap-2">
             <a th:href="@{/Admins/usuarios}" class="btn btn-ghost se-chip">Usuarios</a>
             <a th:href="@{/Admins/servicios}" class="btn btn-ghost se-chip">Servicios</a>
             <a th:href="@{/solicitud/historial}" class="btn btn-ghost se-chip">📜 Historial</a>
 
-            <!-- Botón de cierre de sesión (con CSRF) -->
+            <!-- Formulario de logout con token CSRF -->
+            <!-- Logout form with CSRF token -->
             <form th:action="@{/auth/logout}" method="post" class="m-0 p-0">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <button class="btn btn-outline-danger se-chip" type="submit">Cerrar sesión</button>
@@ -98,26 +129,35 @@
     </div>
 </nav>
 
-<!-- ===== Contenido principal ===== -->
+<!-- ===== Contenido principal: Formulario Crear Usuario ===== -->
+<!-- ===== Main content: Create User Form ===== -->
 <main class="container my-4">
 
-    <!-- Encabezado del formulario -->
+    <!-- Encabezado y botón volver -->
+    <!-- Header and back button -->
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h1 class="se-title m-0">Crear Usuario</h1>
         <a th:href="@{/Admins/usuarios}" class="btn btn-ghost se-chip">← Volver</a>
     </div>
 
-    <!-- Mensajes de éxito o error -->
+    <!-- Mensajes dinámicos de éxito o error -->
+    <!-- Dynamic success or error messages -->
     <div th:if="${mensajeExito}" class="alert alert-success se-card mb-3" th:text="${mensajeExito}"></div>
     <div th:if="${error}" class="alert alert-danger se-card mb-3" th:text="${error}"></div>
 
     <!-- ===== Formulario de creación de usuario ===== -->
+    <!-- ===== User creation form ===== -->
     <form th:action="@{/Admins/usuarios/crear}" th:object="${usuario}" method="post"
           class="se-card needs-validation" novalidate>
-        <!-- Token CSRF obligatorio -->
+        <!-- Token CSRF -->
+        <!-- CSRF token -->
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-        <!-- Campo: Nombre de usuario -->
+        <!-- Campos de formulario: Nombre, correo, clave, teléfono, ciudad, rol -->
+        <!-- Form fields: username, email, password, phone, city, role -->
+
+        <!-- Nombre de usuario -->
+        <!-- Username -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="nombreUsuario">Nombre de Usuario</label>
             <input id="nombreUsuario" type="text" th:field="*{nombreUsuario}" class="form-control"
@@ -127,7 +167,8 @@
                  class="text-danger small mt-1"></div>
         </div>
 
-        <!-- Campo: Correo electrónico -->
+        <!-- Correo electrónico -->
+        <!-- Email -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="correo">Correo</label>
             <input id="correo" type="email" th:field="*{correo}" class="form-control"
@@ -137,13 +178,15 @@
                  class="text-danger small mt-1"></div>
         </div>
 
-        <!-- Campo: Clave con botón de mostrar/ocultar -->
+        <!-- Clave -->
+        <!-- Password -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="clave">Clave</label>
             <div class="input-group">
                 <input id="clave" type="password" th:field="*{clave}" class="form-control"
                        placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password">
-                <!-- Botón para mostrar u ocultar la contraseña -->
+                <!-- Botón mostrar/ocultar -->
+                <!-- Show/hide password button -->
                 <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Mostrar u ocultar clave">👁</button>
             </div>
             <div class="form-text">Mínimo 6 caracteres.</div>
@@ -152,7 +195,8 @@
                  class="text-danger small mt-1"></div>
         </div>
 
-        <!-- Campo: Teléfono -->
+        <!-- Teléfono -->
+        <!-- Phone -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="telefono">Teléfono</label>
             <input id="telefono" type="tel" th:field="*{telefono}" class="form-control"
@@ -162,7 +206,8 @@
                  class="text-danger small mt-1"></div>
         </div>
 
-        <!-- Campo: Ciudad -->
+        <!-- Ciudad -->
+        <!-- City -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="ciudad">Ciudad</label>
             <input id="ciudad" type="text" th:field="*{ciudad}" class="form-control" placeholder="Ciudad">
@@ -170,12 +215,12 @@
                  class="text-danger small mt-1"></div>
         </div>
 
-        <!-- Campo: Rol del usuario (select con ID de rol) -->
+        <!-- Rol -->
+        <!-- Role -->
         <div class="mb-3">
             <label class="form-label fw-semibold" for="rol">Rol</label>
             <select id="rol" th:field="*{rol.id}" class="form-select" required>
                 <option value="" hidden>Selecciona un rol…</option>
-                <!-- Iteración Thymeleaf para cargar roles desde el modelo -->
                 <option th:each="r : ${roles}" th:value="${r.id}" th:text="${r.rol}"></option>
             </select>
             <div class="invalid-feedback">Selecciona un rol.</div>
@@ -184,6 +229,7 @@
         </div>
 
         <!-- Botones de acción -->
+        <!-- Action buttons -->
         <div class="d-flex justify-content-between mt-3">
             <a th:href="@{/Admins/usuarios}" class="btn btn-secondary">Cancelar</a>
             <button type="submit" class="btn btn-brand" id="submitBtn">Guardar Usuario</button>
@@ -191,11 +237,13 @@
     </form>
 </main>
 
-<!-- ===== Librerías JS de Bootstrap ===== -->
+<!-- ===== Scripts de Bootstrap ===== -->
+<!-- ===== Bootstrap JS Scripts ===== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // ===== Lógica para mostrar/ocultar contraseña =====
+    // ===== Lógica mostrar/ocultar contraseña =====
+    // ===== Show/hide password logic =====
     (function(){
         const btn = document.getElementById('togglePwd');
         const input = document.getElementById('clave');
@@ -208,26 +256,35 @@
         }
     })();
 
-    // ===== Validación con Bootstrap y evitar doble envío =====
+    // ===== Validación de formulario y prevención doble envío =====
+    // ===== Form validation and prevent double submit =====
     (function () {
         const form = document.querySelector('.needs-validation');
         const submitBtn = document.getElementById('submitBtn');
         if(!form) return;
 
         form.addEventListener('submit', function (e) {
-            // Si hay campos inválidos, se cancela el envío
             if (!form.checkValidity()) {
                 e.preventDefault();
                 e.stopPropagation();
             } else {
-                // Desactiva el botón para evitar doble envío del formulario
-                submitBtn.disabled = true;
+                submitBtn.disabled = true; // Evita doble envío / prevent double submit
             }
-            // Activa los estilos de validación de Bootstrap
-            form.classList.add('was-validated');
+            form.classList.add('was-validated'); // Bootstrap styles
         }, false);
     })();
 </script>
 
 </body>
 </html>
+
+<!--
+Summary (Technical Note):
+This HTML page provides an admin interface to create a new user in ServiExpress.
+It includes:
+- Navbar with links to admin sections and logout button.
+- Dynamic form with validation messages, CSRF token, and fields: username, email, password, phone, city, role.
+- Password show/hide toggle and Bootstrap validation.
+- Action buttons: Cancel and Save.
+- Styling uses Bootstrap and project-specific variables/colors.
+-->

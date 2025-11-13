@@ -1,7 +1,17 @@
-<!-- Documento HTML principal / Main HTML document -->
+<!-- ==================================================
+ServiExpress · EDITAR SERVICIO
+Formulario de administración para editar un servicio existente
+================================================== -->
+
+<!-- ==================================================
+ServiExpress · EDIT SERVICE
+Admin form to edit an existing service
+================================================== -->
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <!-- Configuración de caracteres / Character encoding -->
     <meta charset="UTF-8">
@@ -18,7 +28,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}"/>
 
     <style>
-        /* Variables de color principales / Main color variables */
+        /* ===== Variables de color principales / Main color variables ===== */
         :root{
             --bg:#F8EDE3; --tone-2:#DFD3C3; --tone-3:#D0B8A8; --brand:#C5705D;
             --brand-600:#a85848; --text:#3b2f2f; --surface:#ffffff; --ring:rgba(197,112,93,.35);
@@ -157,3 +167,13 @@
 
 </body>
 </html>
+
+<!--
+Resumen técnico:
+Este documento HTML permite a los administradores editar los servicios disponibles.
+Incluye:
+- Barra de navegación con enlaces a secciones administrativas y logout.
+- Formulario con validaciones, token CSRF, campos: nombre, precio, descripción, estado.
+- Botones de acción: Cancelar y Actualizar.
+- Estilos mediante Bootstrap y variables CSS del proyecto.
+-->

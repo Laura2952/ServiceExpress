@@ -4,30 +4,48 @@
     <meta charset="UTF-8">
     <title>Solicitudes Pendientes</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <!-- ===================================================== -->
+    <!-- Technical comments:
+         This template displays all pending service requests for a provider.
+         Providers can accept or reject requests directly from this table.
+         Thymeleaf is used for iterating over 'solicitudesPendientes' and binding dynamic links.
+    -->
+    <!-- ===================================================== -->
+
     <style>
+        /* General page styling */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         h2 {
             color: #333;
         }
+
+        /* Table styling */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
+
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: left;
         }
+
         th {
             background-color: #f4f4f4;
         }
+
         tr:nth-child(even) {
             background-color: #fafafa;
         }
+
+        /* Button styling */
         .btn {
             padding: 6px 12px;
             margin: 2px;
@@ -35,30 +53,41 @@
             border-radius: 5px;
             font-size: 14px;
         }
+
         .btn-aceptar {
-            background-color: #4CAF50;
+            background-color: #4CAF50; /* Green for accept */
             color: white;
         }
+
         .btn-rechazar {
-            background-color: #f44336;
+            background-color: #f44336; /* Red for reject */
             color: white;
         }
     </style>
 
-    <!-- Botón para volver al historial de servicios -->
+    <!-- ===================================================== -->
+    <!-- Back button to return to the provider's service history -->
+    <!-- Provides quick navigation for the user -->
+    <!-- ===================================================== -->
     <a th:href="@{|/Proveedores/${idProveedor}/historialServicios|}"
        class="btn btn-secondary">
         Volver al Historial de Servicios
     </a>
 </head>
+
 <body>
 
+<!-- Page heading -->
 <h2>Solicitudes Pendientes</h2>
 
+<!-- ===================== EMPTY STATE ===================== -->
+<!-- Purpose: Show a message if the provider has no pending requests -->
 <div th:if="${#lists.isEmpty(solicitudesPendientes)}">
     <p>No tienes solicitudes pendientes.</p>
 </div>
 
+<!-- ===================== PENDING REQUESTS TABLE ===================== -->
+<!-- Purpose: Display each pending service request with options to accept or reject -->
 <div th:if="${!#lists.isEmpty(solicitudesPendientes)}">
     <table>
         <thead>
@@ -71,14 +100,24 @@
         </tr>
         </thead>
         <tbody>
+        <!-- Iterates over all pending requests -->
         <tr th:each="servicio : ${solicitudesPendientes}">
+            <!-- Service ID -->
             <td th:text="${servicio.id}"></td>
+            <!-- Service name -->
             <td th:text="${servicio.nombre}"></td>
+            <!-- Service description -->
             <td th:text="${servicio.descripcion}"></td>
+            <!-- Client name (or placeholder if null) -->
             <td th:text="${servicio.cliente != null ? servicio.cliente.nombre : '---'}"></td>
+            <!-- Action buttons -->
             <td>
-                <a th:href="@{|/proveedor/${servicio.proveedor.id}/aceptar/${servicio.id}|}" class="btn btn-aceptar">Aceptar</a>
-                <a th:href="@{|/proveedor/${servicio.proveedor.id}/rechazar/${servicio.id}|}" class="btn btn-rechazar">Rechazar</a>
+                <!-- Accept request button -->
+                <a th:href="@{|/proveedor/${servicio.proveedor.id}/aceptar/${servicio.id}|}"
+                   class="btn btn-aceptar">Aceptar</a>
+                <!-- Reject request button -->
+                <a th:href="@{|/proveedor/${servicio.proveedor.id}/rechazar/${servicio.id}|}"
+                   class="btn btn-rechazar">Rechazar</a>
             </td>
         </tr>
         </tbody>
@@ -87,3 +126,12 @@
 
 </body>
 </html>
+
+<!-- ===================================================== -->
+<!-- Summary (Technical Note):
+This template renders a table of pending service requests for a provider.
+- Checks if the list 'solicitudesPendientes' is empty and shows a placeholder message.
+- Each request row displays: ID, service name, description, and client name.
+- Provides action buttons to accept or reject the request, linked dynamically to provider and service IDs.
+- Includes a navigation button to return to the provider's service history.
+-->

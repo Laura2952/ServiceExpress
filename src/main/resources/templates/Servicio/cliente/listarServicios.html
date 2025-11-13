@@ -1,4 +1,6 @@
+<!-- ===================================================== -->
 <!-- Página de Servicios Disponibles para Clientes / Available Services Page for Clients -->
+<!-- ===================================================== -->
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -14,17 +16,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
     <style>
+        /* ===================================================== */
+        /* Variables de color / Color variables */
+        /* ===================================================== */
         :root{
-            /* MISMA PALETA DEL ADMIN / SAME ADMIN COLOR PALETTE */
-            --bg:#F8EDE3;
-            --tone-2:#DFD3C3;
-            --tone-3:#D0B8A8;
-            --brand:#C5705D;
-            --brand-600:#a85848;
-            --text:#3b2f2f;
-            --surface:#ffffff;
-            --ring:rgba(197,112,93,.35);
-            --line:#e6d7ce;
+            --bg:#F8EDE3;       /* Fondo principal / Main background */
+            --tone-2:#DFD3C3;   /* Tono secundario / Secondary tone */
+            --tone-3:#D0B8A8;   /* Tono terciario / Tertiary tone */
+            --brand:#C5705D;    /* Color principal de marca / Brand primary color */
+            --brand-600:#a85848;/* Color marca oscuro / Brand dark color */
+            --text:#3b2f2f;     /* Color de texto / Text color */
+            --surface:#ffffff;  /* Color de superficie / Surface color */
+            --ring:rgba(197,112,93,.35); /* Color de foco / Focus ring color */
+            --line:#e6d7ce;     /* Color de línea / Line color */
         }
 
         /* Ajustes generales / General settings */
@@ -235,3 +239,12 @@
 
 </body>
 </html>
+
+<!-- ===================================================== -->
+<!-- Resumen técnico / Technical Summary:
+- Este HTML permite a los clientes ver los servicios disponibles.
+- Incluye buscador dinámico y filtrado de resultados en tiempo real.
+- Se usa Thymeleaf para renderizado dinámico desde el servidor.
+- Botones de acción permiten solicitar servicios al proveedor correspondiente.
+- Diseño responsivo y moderno usando Bootstrap y estilos personalizados.
+-->

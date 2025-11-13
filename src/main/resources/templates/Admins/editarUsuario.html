@@ -1,7 +1,17 @@
-<!-- Documento HTML principal / Main HTML document -->
+<!-- ==================================================
+ServiExpress · EDITAR USUARIO
+Formulario de administración para editar un usuario existente
+================================================== -->
+
+<!-- ==================================================
+ServiExpress · EDIT USER
+Admin form to edit an existing user
+================================================== -->
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <!-- Codificación del documento / Document encoding -->
     <meta charset="UTF-8">
@@ -18,7 +28,7 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
     <style>
-        /* Variables de color globales / Global color variables */
+        /* ===== Variables de color globales / Global color variables ===== */
         :root{
             --bg:#F8EDE3; --tone-2:#DFD3C3; --tone-3:#D0B8A8; --brand:#C5705D; --brand-600:#a85848;
             --text:#3b2f2f; --surface:#fff; --ring:rgba(197,112,93,.35); --line:#e6d7ce;
@@ -79,6 +89,7 @@
         .hint{ color:#6b5c56; font-size:.9rem; }
     </style>
 </head>
+
 <body>
 
 <!-- Sección de navegación principal / Main navigation section -->
@@ -196,5 +207,16 @@
         });
     })();
 </script>
+
 </body>
 </html>
+
+<!--
+Resumen técnico:
+Este documento HTML permite a los administradores editar los usuarios existentes.
+Incluye:
+- Barra de navegación con enlaces a secciones administrativas y logout.
+- Formulario con validaciones, token CSRF, campos: nombre de usuario, correo, clave, teléfono, ciudad, rol.
+- Botones de acción: Cancelar y Actualizar usuario.
+- Estilos mediante Bootstrap y variables CSS del proyecto.
+-->

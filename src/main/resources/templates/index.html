@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <!-- Archivo principal: página de inicio de ServiExpress / Main file: ServiExpress home page -->
-<!-- Proporciona la estructura y estilos para el marketplace / Provides structure and styles for the marketplace -->
+<!-- Proporciona la estructura y estilos para el marketplace /
+Provides structure and styles for the marketplace -->
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
-<!-- Se establece el idioma a español y namespaces para Thymeleaf / Language set to Spanish and namespaces for Thymeleaf -->
+<!-- Se establece el idioma a español y namespaces para Thymeleaf /
+Language set to Spanish and namespaces for Thymeleaf -->
 <head>
     <!-- Metadatos y recursos / Metadata and resources -->
     <meta charset="utf-8">
@@ -234,7 +236,8 @@
                     </article>
                 </div>
 
-                <!-- Mensaje cuando no hay servicios / Message when no services -->
+                <!-- Mensaje cuando no hay servicios /
+                Message when no services -->
                 <div class="muted" th:if="${#lists.isEmpty(servicios)}" style="margin-top:12px">No hay servicios disponibles.</div>
                 <div class="divider"></div>
             </div>
@@ -255,7 +258,8 @@
                                 </a>
                             </div>
                         </div>
-                        <!-- Nota cuando no hay datos suficientes / Note when not enough data -->
+                        <!-- Nota cuando no hay datos suficientes /
+                        Note when not enough data -->
                         <div class="muted" th:if="${#lists.isEmpty(topProveedores)}">Aún no hay calificaciones suficientes para el ranking.</div>
                     </div>
                 </div>
@@ -263,7 +267,8 @@
         </section>
     </main>
 
-    <!-- FOOTER: derechos y nota de servicio / FOOTER: copyright and service note -->
+    <!-- FOOTER: derechos y nota de servicio /
+     FOOTER: copyright and service note -->
     <footer class="footer">
         <div class="shell">
             <div class="wrap-xl">

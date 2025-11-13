@@ -1,6 +1,13 @@
 <!-- src/main/resources/templates/calificaciones/lista.html -->
 <!-- Archivo de la plantilla para mostrar la lista de calificaciones -->
 <!-- Template file to display the list of ratings -->
+
+<!-- Ratings List Page HTML Template -->
+<!-- Purpose:
+     - Displays a list of customer ratings (calificaciones) in a card-based layout.
+     - Provides filter chips to filter ratings by star score.
+     - Uses Thymeleaf for server-side rendering and Spring Security for logout form authorization. -->
+
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
@@ -299,3 +306,10 @@
 
 </body>
 </html>
+<!-- Technical Summary:
+This HTML template renders a list of customer ratings in a card-based grid.
+It provides interactive star filters to allow users to filter ratings by score.
+Each rating card displays the date, stars, customer comment, and related provider, service, and client info.
+Uses Thymeleaf for server-side iteration and Spring Security for logout authorization.
+The layout is responsive and adapts to smaller screens.
+-->

@@ -4,16 +4,27 @@
     <meta charset="UTF-8">
     <title>Historial de Servicios</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <!-- ===================================================== -->
+    <!-- Embedded styles for layout, colors, and UI elements -->
+    <!-- Styles define navigation, cards, tables, buttons, modals -->
+    <!-- ===================================================== -->
     <style>
+        /* ===================== COLOR VARIABLES ===================== */
+        /* Purpose: Define a consistent color palette for background, surfaces, branding, text, alerts */
         :root{
             --bg:#F8EDE3; --surface:#ffffff; --tone-2:#DFD3C3; --tone-3:#D0B8A8; --brand:#C5705D;
             --text:#3b2f2f; --ring:rgba(197,112,93,.35);
             --ok:#1f9d65; --warn:#b58400; --err:#b42318; --info:#3b82f6;
         }
+
+        /* ===================== GLOBAL RESET & BODY ===================== */
+        /* Purpose: Basic reset and base font styling */
         *{box-sizing:border-box}
         body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Inter,Arial,sans-serif}
 
-        /* NAV */
+        /* ===================== NAVIGATION ===================== */
+        /* Styles for the top navigation bar and links */
         .nav{background:linear-gradient(180deg,var(--bg),var(--tone-2));border-bottom:1px solid rgba(0,0,0,.05)}
         .nav-inner{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;gap:10px;align-items:center}
         .se-brand{font-weight:800;letter-spacing:.2px;color:var(--brand);text-decoration:none;font-size:20px}
@@ -23,7 +34,8 @@
             box-shadow:0 3px 10px rgba(0,0,0,.06);font-weight:700}
         .pill.primary{background:var(--brand);border-color:var(--brand);color:#fff}
 
-        /* CARD + TABLE */
+        /* ===================== CARD + TABLE ===================== */
+        /* Wrapper for main content, table layout and table row styling */
         .wrap{max-width:1100px;margin:28px auto;padding:20px;background:var(--surface);border:1px solid var(--tone-2);
             border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
         h2{margin:4px 0 18px;text-align:center}
@@ -33,7 +45,8 @@
         tbody tr:nth-child(odd){background:#fbf7f3}
         .actions{white-space:nowrap}
 
-        /* Estados */
+        /* ===================== SERVICE STATUS STYLING ===================== */
+        /* Purpose: Color-code service states for visual distinction */
         .estado{font-weight:800;text-transform:uppercase}
         .estado.PAGO_EN_PROCESO{color:var(--warn)}
         .estado.PAGO_ACEPTADO{color:var(--ok)}
@@ -43,14 +56,16 @@
         .estado.CANCELADA{color:#d97706}
         .estado.COMPLETADA{color:var(--info)}
 
-        /* Botones */
+        /* ===================== BUTTONS ===================== */
+        /* Base button styling and variant colors */
         .btn{display:inline-block;padding:8px 14px;border-radius:10px;font-weight:700;border:none;cursor:pointer}
         .btn.primary{background:#c77462;color:#fff}.btn.primary:hover{filter:brightness(.95)}
         .btn.secondary{background:#95a5a6;color:#fff}.btn.secondary:hover{background:#7f8c8d}
         .btn.ghost{background:#fff;border:1px solid var(--tone-2);color:var(--text)}
         .btn.danger{background:#e74c3c;color:#fff}.btn.danger:hover{background:#c0392b}
 
-        /* Modal simple */
+        /* ===================== MODAL ===================== */
+        /* Simple modal for editing service state */
         .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000}
         .modal-box{width:min(480px,92vw);margin:10% auto;background:#fff;border-radius:14px;border:1px solid var(--tone-2);
             box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
@@ -60,24 +75,29 @@
         select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--tone-3);font:inherit}
         select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 .2rem var(--ring)}
     </style>
+
+    <!-- ===================== JAVASCRIPT FUNCTIONS ===================== -->
+    <!-- Purpose: Open and close modal by ID -->
     <script>
         function abrir(id){ document.getElementById('m-'+id).style.display='block' }
         function cerrar(id){ document.getElementById('m-'+id).style.display='none' }
     </script>
 </head>
+
 <body>
 
-<!-- NAV -->
+<!-- ===================== NAVIGATION HEADER ===================== -->
 <header class="nav">
     <div class="nav-inner">
+        <!-- Brand link to home page -->
         <a class="se-brand" th:href="@{/}">ServiExpress</a>
         <div class="nav-spacer"></div>
 
-        <!-- Si es ADMIN, mostrar ir/volver -->
+        <!-- Admin-specific link to manage services -->
         <a th:if="${session.usuarioSesion != null and session.usuarioSesion.rol != null and session.usuarioSesion.rol.rol == 'ADMIN'}"
            th:href="@{/Admins/servicios}" class="pill">⬅ Gestionar Servicios</a>
 
-        <!-- Si NO es admin, tus atajos originales si los necesitas -->
+        <!-- Non-admin shortcuts: pending requests and publish services -->
         <a th:if="${!(session.usuarioSesion != null and session.usuarioSesion.rol != null and session.usuarioSesion.rol.rol == 'ADMIN')}"
            th:href="@{|/Proveedores/${idProveedor}/solicitudesPendientes|}" class="pill">Solicitudes pendientes</a>
         <a th:if="${!(session.usuarioSesion != null and session.usuarioSesion.rol != null and session.usuarioSesion.rol.rol == 'ADMIN')}"
@@ -85,13 +105,17 @@
     </div>
 </header>
 
+<!-- ===================== MAIN CONTENT ===================== -->
 <main class="wrap">
+    <!-- Section title -->
     <h2>Historial de Servicios</h2>
 
+    <!-- Conditional rendering: no history -->
     <div th:if="${#lists.isEmpty(historialServicios)}">
         <p>No tienes servicios en el historial.</p>
     </div>
 
+    <!-- Conditional rendering: table with history -->
     <div th:if="${!#lists.isEmpty(historialServicios)}">
         <table>
             <thead>
@@ -102,6 +126,7 @@
                 <th>Cliente</th>
                 <th>Precio</th>
                 <th>Estado</th>
+                <!-- Admin-only column for actions -->
                 <th class="actions"
                     th:if="${session.usuarioSesion != null and session.usuarioSesion.rol != null and session.usuarioSesion.rol.rol == 'ADMIN'}">
                     Acciones
@@ -109,6 +134,7 @@
             </tr>
             </thead>
             <tbody>
+            <!-- Iterating over service history -->
             <tr th:each="servicio : ${historialServicios}">
                 <td th:text="${servicio.idServicio}">1</td>
                 <td th:text="${servicio.nombre}">Servicio</td>
@@ -117,16 +143,18 @@
                 <td th:text="${servicio.precio}">0</td>
                 <td th:text="${servicio.estado}" th:class="'estado ' + ${servicio.estado}">ESTADO</td>
 
-                <!-- Botón editar solo ADMIN -->
+                <!-- Admin-only edit button and modal -->
                 <td class="actions"
                     th:if="${session.usuarioSesion != null and session.usuarioSesion.rol != null and session.usuarioSesion.rol.rol == 'ADMIN'}">
+                    <!-- Opens modal to edit service state -->
                     <button type="button" class="btn primary" th:onclick="'abrir(' + ${servicio.idServicio} + ')'">Editar estado</button>
 
-                    <!-- MODAL -->
+                    <!-- Modal to change service state -->
                     <div class="modal" th:id="${'m-' + servicio.idServicio}">
                         <div class="modal-box">
                             <div class="modal-head">Cambiar estado del servicio #<span th:text="${servicio.idServicio}">1</span></div>
                             <div class="modal-body">
+                                <!-- Form to update state; uses CSRF token -->
                                 <form th:action="@{'/Admins/servicios/' + ${servicio.idServicio} + '/estado'}" method="post">
                                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                     <label for="estado" style="font-weight:700;display:block;margin-bottom:6px">Nuevo estado</label>
@@ -143,7 +171,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /MODAL -->
+                    <!-- /Modal -->
                 </td>
             </tr>
             </tbody>
@@ -153,3 +181,14 @@
 
 </body>
 </html>
+
+<!-- ===================================================== -->
+<!-- Summary (Technical Note):
+This HTML template displays the service history for a provider or admin in ServiExpress.
+- Renders a table with columns for ID, service name, description, client, price, and state.
+- Admin users see an additional 'Actions' column with a modal form to edit the service state.
+- Uses Thymeleaf expressions for dynamic data rendering and conditional UI based on user role.
+- Modal visibility is controlled via simple JavaScript functions 'abrir' and 'cerrar'.
+- Color-coded states improve readability of service status (e.g., PAGO_ACEPTADO in green).
+- CSRF protection is included in forms for state changes.
+-->

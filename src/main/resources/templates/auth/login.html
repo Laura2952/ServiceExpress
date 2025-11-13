@@ -1,54 +1,129 @@
 <!doctype html>
+<!-- Login page template -->
+<!-- Purpose: Provides a user interface for existing users to log in with email and password. -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <title>Iniciar sesión</title>
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <style>
-    :root { --bg:#f6ece3; --card:#fff; --stroke:#ead8ce; --text:#2b2b2b; --muted:#9a7d72; --brand:#c77462; }
-    *{box-sizing:border-box}
-    body{min-height:100vh;margin:0;display:grid;place-items:center;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;color:var(--text)}
-    .card{width:min(560px,94vw);background:var(--card);border:1px solid var(--stroke);border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.06)}
-    .body{padding:28px}
-    h1{font-size:2.2rem;margin:0 0 18px}
-    .alert{padding:12px 14px;border-radius:12px;margin:10px 0}
-    .alert.error{background:#fde8e8;border:1px solid #f4b4b4;color:#8b1a1a}
-    .alert.info{background:#eef8ed;border:1px solid #c7e7c0;color:#265d2b}
-    .group{margin:14px 0}
-    label{font-weight:600;display:block;margin:0 0 6px}
-    input{width:100%;padding:12px 14px;border:1px solid #dec6bb;border-radius:12px;font-size:1rem}
-    .row{display:flex;gap:12px;margin-top:14px}
-    .btn{border-radius:12px;padding:12px 16px;font-weight:700;border:1px solid var(--brand);cursor:pointer}
-    .btn.primary{background:var(--brand);color:#fff}
-    .btn.ghost{background:transparent;color:var(--brand)}
-  </style>
+    <meta charset="utf-8">
+    <!-- UTF-8 character encoding for internationalization -->
+
+    <title>Iniciar sesión</title>
+    <!-- Page title shown in the browser tab -->
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- External CSS for global styles -->
+
+    <style>
+        /* ===================== CSS VARIABLES ===================== */
+        /* Define the main theme colors and visual constants for the login page */
+        :root {
+            --bg:#f6ece3;      /* Background color for page / page background */
+            --card:#fff;        /* Card container background / card container */
+            --stroke:#ead8ce;   /* Border color for card / card border */
+            --text:#2b2b2b;     /* Default text color / text color */
+            --muted:#9a7d72;    /* Muted text or secondary info / secondary text */
+            --brand:#c77462;    /* Primary brand color / primary action color */
+        }
+
+        /* ===================== GLOBAL STYLES ===================== */
+        *{box-sizing:border-box}
+        body{
+            min-height:100vh;
+            margin:0;
+            display:grid;
+            place-items:center; /* Center card both vertically and horizontally */
+            background:var(--bg);
+            font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+            color:var(--text);
+        }
+
+        /* ===================== CARD ===================== */
+        .card{
+            width:min(560px,94vw); /* Responsive max-width / responsive card */
+            background:var(--card);
+            border:1px solid var(--stroke);
+            border-radius:16px;
+            box-shadow:0 12px 28px rgba(0,0,0,.06); /* Subtle shadow for elevation */
+        }
+
+        .body{padding:28px}
+        h1{font-size:2.2rem;margin:0 0 18px}
+
+        /* ===================== ALERTS ===================== */
+        .alert{
+            padding:12px 14px;
+            border-radius:12px;
+            margin:10px 0;
+        }
+        .alert.error{background:#fde8e8;border:1px solid #f4b4b4;color:#8b1a1a}
+        .alert.info{background:#eef8ed;border:1px solid #c7e7c0;color:#265d2b}
+        /* Alerts for displaying success, info, or error messages */
+
+        /* ===================== FORM GROUPS ===================== */
+        .group{margin:14px 0}
+        label{font-weight:600;display:block;margin:0 0 6px}
+        input{
+            width:100%;
+            padding:12px 14px;
+            border:1px solid #dec6bb;
+            border-radius:12px;
+            font-size:1rem;
+        }
+
+        /* ===================== BUTTONS ===================== */
+        .row{display:flex;gap:12px;margin-top:14px}
+        .btn{
+            border-radius:12px;
+            padding:12px 16px;
+            font-weight:700;
+            border:1px solid var(--brand);
+            cursor:pointer;
+        }
+        .btn.primary{background:var(--brand);color:#fff}
+        .btn.ghost{background:transparent;color:var(--brand)}
+        /* Primary button for submitting, ghost button for secondary actions */
+    </style>
 </head>
 <body>
 <div class="card">
-  <div class="body">
-    <h1>Iniciar sesión</h1>
+    <div class="body">
+        <h1>Iniciar sesión</h1>
+        <!-- Page heading / Main heading for login form -->
 
-    <!-- mensajes -->
-    <div class="alert info" th:if="${success}" th:text="${success}">Cuenta creada. ¡Inicia sesión!</div>
-    <div class="alert error" th:if="${param.error}">Correo o contraseña incorrectos.</div>
-    <div class="alert info" th:if="${param.logout}">Sesión cerrada correctamente.</div>
+        <!-- ===================== ALERT MESSAGES ===================== -->
+        <!-- Info alert shown after successful account creation -->
+        <div class="alert info" th:if="${success}" th:text="${success}">Cuenta creada. ¡Inicia sesión!</div>
+        <!-- Error alert when login credentials are invalid -->
+        <div class="alert error" th:if="${param.error}">Correo o contraseña incorrectos.</div>
+        <!-- Info alert when user has logged out -->
+        <div class="alert info" th:if="${param.logout}">Sesión cerrada correctamente.</div>
 
-    <!-- IMPORTANTE: name="username" y action="/auth/login" -->
-    <form th:action="@{/auth/login}" method="post">
-      <div class="group">
-        <label for="username">Correo</label>
-        <input id="username" name="username" type="email" placeholder="tucorreo@dominio.com" required>
-      </div>
-      <div class="group">
-        <label for="password">Contraseña</label>
-        <input id="password" name="password" type="password" required>
-      </div>
-      <div class="row">
-        <a class="btn ghost" th:href="@{/auth/registro}">Crear cuenta</a>
-        <button class="btn primary" type="submit">Entrar</button>
-      </div>
-    </form>
-  </div>
+        <!-- ===================== LOGIN FORM ===================== -->
+        <!-- Important: input name="username" and form action="/auth/login" required for Spring Security -->
+        <form th:action="@{/auth/login}" method="post">
+            <!-- Email input field -->
+            <div class="group">
+                <label for="username">Correo</label>
+                <input id="username" name="username" type="email" placeholder="tucorreo@dominio.com" required>
+            </div>
+
+            <!-- Password input field -->
+            <div class="group">
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" required>
+            </div>
+
+            <!-- Action buttons: Create account and submit -->
+            <div class="row">
+                <a class="btn ghost" th:href="@{/auth/registro}">Crear cuenta</a>
+                <!-- Link to registration page / redirect to registration -->
+                <button class="btn primary" type="submit">Entrar</button>
+                <!-- Submit login form / perform authentication -->
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>
+
+<!-- Summary (Technical Note):
+This HTML file defines a login page for the web application. It contains a responsive card-based layout with a form that collects the user's email and password. Alerts provide feedback for login errors, logout success, or account creation. The form is integrated with Spring Security through `th:action="/auth/login"` and requires specific input names (`username`, `password`) to function correctly. Styles use CSS variables for easy theming and maintain visual consistency. -->

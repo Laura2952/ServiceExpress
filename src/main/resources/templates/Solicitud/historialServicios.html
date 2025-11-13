@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Español: Configuración del encabezado del documento -->
-    <!-- English: Document header configuration -->
+    <!-- Document header configuration -->
     <meta charset="UTF-8">
     <title>Historial de Servicios</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <!-- Español: Fuente Poppins desde Google Fonts -->
-    <!-- English: Poppins font from Google Fonts -->
+    <!-- Import Poppins font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* Español: Variables de colores y diseño general */
-        /* English: Color variables and general layout */
+        /* Color variables and general layout */
         :root{
             --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1;
             --text:#3e2a2a; --muted:#7b5e57;
@@ -28,8 +25,7 @@
             --radius:16px;
         }
 
-        /* Español: Estilo general del documento */
-        /* English: General document styling */
+        /* General document styling */
         *{box-sizing:border-box}
         body{
             margin:0; color:var(--text); background:var(--page);
@@ -37,8 +33,7 @@
         }
         a{color:inherit; text-decoration:none}
 
-        /* Español: Barra de navegación superior */
-        /* English: Top navigation bar */
+        /* Top navigation bar */
         .navbar{
             background:linear-gradient(90deg,var(--bg1),var(--bg2));
             border-bottom:1px solid var(--line);
@@ -52,19 +47,16 @@
             border:1px solid #d9a89c; background:#fff; color:#8a4e44; font-weight:700; cursor:pointer
         }
 
-        /* Español: Contenedor general y título */
-        /* English: General container and title */
+        /* General container and title */
         .container{max-width:1200px; margin:28px auto 40px; padding:0 16px}
         h1{text-align:center; margin:8px 0 18px; font-size:clamp(22px,3.2vw,32px)}
 
-        /* Español: Estilos para alertas o mensajes */
-        /* English: Styles for alerts or messages */
+        /* Styles for alerts or messages */
         .alert{border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin:10px 0; font-weight:600}
         .alert.success{background:#f0faf4; border-color:#cce9d8; color:#1f7a50}
         .alert.danger{background:#fff5f5; border-color:#f0d1cf; color:#9c2f2f}
 
-        /* Español: Estilos de tabla principal */
-        /* English: Main table styling */
+        /* Main table styling */
         .table-wrap{
             background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
             box-shadow:0 20px 40px rgba(0,0,0,.06); overflow:hidden
@@ -81,13 +73,11 @@
         tbody td{padding:12px 14px; border-top:1px solid var(--border)}
         tbody tr:hover{background:#fff8f4}
 
-        /* Español: Clases auxiliares de formato */
-        /* English: Helper formatting classes */
+        /* Helper formatting classes */
         .truncate{max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
         .price{white-space:nowrap; font-weight:700}
 
-        /* Español: Etiquetas de estado con color */
-        /* English: Status pills with color */
+        /* Status pills with color */
         .pill{
             display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:800;
             border:1px solid var(--border); background:#faf7f5; color:var(--muted); font-size:.875rem
@@ -98,8 +88,7 @@
         .pill[data-status="EN PROCESO"]{background:#fff7f4; color:#a3432c}
         .pill[data-status="FINALIZADO"]{background:var(--success-bg); color:var(--success)}
 
-        /* Español: Estilos generales de botones */
-        /* English: General button styles */
+        /* General button styles */
         .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px 14px; border-radius:10px;
             font-weight:800; cursor:pointer; border:1px solid var(--border); background:#fff; color:var(--brand-2);
             transition:background .15s ease,border-color .15s ease,transform .05s ease; text-decoration:none}
@@ -112,16 +101,14 @@
         .btn.danger:hover{background:#c0392b}
         .btn.disabled{opacity:.5; pointer-events:none}
 
-        /* Español: Acciones fijas a la derecha */
-        /* English: Sticky actions to the right */
+        /* Sticky actions to the right for table */
         th.sticky-actions, td.sticky-actions{
             position:sticky; right:0; background:#fff; z-index:2; box-shadow:-6px 0 8px rgba(0,0,0,.04); text-align:center
         }
         thead th.sticky-actions{background:#fbeae0; z-index:3}
         .actions{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
 
-        /* Español: Barra de búsqueda superior */
-        /* English: Top search bar */
+        /* Top search bar */
         .tools{display:flex; gap:10px; flex-wrap:wrap}
         .searchbar{
             display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line);
@@ -133,8 +120,7 @@
 </head>
 <body>
 
-<!-- Español: Barra de navegación con regreso y cierre de sesión -->
-<!-- English: Navigation bar with return and logout -->
+<!-- Navigation bar with return and logout -->
 <nav class="navbar">
     <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
     <div class="nav-actions">
@@ -146,17 +132,16 @@
     </div>
 </nav>
 
-<!-- Español: Contenedor principal con la tabla del historial -->
-<!-- English: Main container with service history table -->
+<!-- Main container with service history table -->
 <div class="container">
     <h1>Historial de Servicios</h1>
 
     <div class="table-wrap">
         <div class="table-head">
-            <!-- Español: Herramientas de búsqueda y refresco -->
-            <!-- English: Search and refresh tools -->
+            <!-- Search and refresh tools -->
             <div class="tools">
-                <div class="searchbar" role="search" aria-label="Filtrar historial">
+                <div class="searchbar" role="search" aria-label="Filter history">
+                    <!-- Search icon SVG -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                          fill="none" stroke="#b07a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
@@ -169,8 +154,7 @@
             </div>
         </div>
 
-        <!-- Español: Tabla con solicitudes registradas -->
-        <!-- English: Table with registered requests -->
+        <!-- Table with registered requests -->
         <div class="table-scroll">
             <table>
                 <thead>
@@ -189,8 +173,7 @@
                 </thead>
 
                 <tbody id="tablaSolicitudes">
-                <!-- Español: Iteración de solicitudes -->
-                <!-- English: Requests iteration -->
+                <!-- Requests iteration -->
                 <tr th:each="solicitud : ${solicitudes}">
                     <td class="truncate" th:text="${solicitud.servicio.nombre}">Servicio</td>
                     <td class="truncate" th:text="${solicitud.servicio.descripcion}">Descripción</td>
@@ -203,16 +186,15 @@
                     <td><span class="pill" th:attr="data-status=${solicitud.estado}" th:text="${solicitud.estado}">ESTADO</span></td>
                     <td class="truncate" th:text="${solicitud.detalles}">—</td>
 
-                    <!-- Español: Acciones disponibles según estado -->
-                    <!-- English: Available actions based on status -->
+                    <!-- Available actions based on status -->
                     <td class="sticky-actions">
                         <div class="actions">
-                            <!-- FINALIZADO: Calificar -->
+                            <!-- FINALIZADO: rate service -->
                             <a th:if="${#strings.equalsIgnoreCase(solicitud.estado,'FINALIZADO')}"
                                th:href="@{/calificaciones/nueva/solicitud/{id}(id=${solicitud.idSolicitud})}"
                                class="btn secondary">Calificar</a>
 
-                            <!-- PENDIENTE: Pagar + Cancelar -->
+                            <!-- PENDIENTE: pay and cancel -->
                             <a th:if="${#strings.equalsIgnoreCase(solicitud.estado,'PENDIENTE')}"
                                th:href="@{/solicitud/pagar/redir/{id}(id=${solicitud.idSolicitud})}"
                                class="btn primary">Pagar</a>
@@ -224,15 +206,13 @@
                                 <button type="submit" class="btn danger">Cancelar</button>
                             </form>
 
-                            <!-- MÁS INFO: siempre disponible -->
-                            <!-- ALWAYS: available for more info -->
+                            <!-- ALWAYS available: more info -->
                             <a th:href="@{/solicitud/detalle/{id}(id=${solicitud.idSolicitud})}" class="btn">Más Info</a>
                         </div>
                     </td>
                 </tr>
 
-                <!-- Español: Mensaje si no hay solicitudes -->
-                <!-- English: Message when there are no requests -->
+                <!-- Message when there are no requests -->
                 <tr th:if="${#lists.isEmpty(solicitudes)}">
                     <td colspan="10" style="text-align:center; padding:20px">No tienes solicitudes registradas</td>
                 </tr>
@@ -242,8 +222,7 @@
     </div>
 </div>
 
-<!-- Español: Script para filtrar por texto -->
-<!-- English: Script for text-based filtering -->
+<!-- Script for text-based filtering in table -->
 <script>
     const inputBuscar = document.getElementById("buscar");
     inputBuscar?.addEventListener("input", function () {
@@ -251,6 +230,7 @@
         const filas = document.querySelectorAll("#tablaSolicitudes tr");
         let visibles = 0;
         filas.forEach(fila => {
+            // Skip empty/no-request rows
             if (fila.querySelector('td[colspan]')) return;
             const texto = fila.textContent.toLowerCase();
             const show = texto.includes(q);
@@ -262,3 +242,12 @@
 
 </body>
 </html>
+
+<!--
+Summary (Technical Note):
+This HTML page renders a Thymeleaf template showing the service request history for a user.
+It features a sticky top navigation bar with return and logout actions, a searchable and scrollable table of requests,
+status pills visually representing each request's state, and action buttons conditional on the status (pay, cancel, rate, more info).
+A client-side script provides live text filtering across the table entries.
+The layout is responsive and uses Poppins font with consistent branding colors and design system variables.
+-->

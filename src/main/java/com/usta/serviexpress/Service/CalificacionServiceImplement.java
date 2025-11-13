@@ -15,6 +15,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * CalificacionServiceImplement
+ *
+ * Purpose:
+ * - Implements business logic for managing ratings (calificaciones) in the system.
+ * - Allows creating new ratings for services or providers.
+ * - Supports listing ratings by criteria.
+ */
 @Service
 @RequiredArgsConstructor
 public class CalificacionServiceImplement implements CalificacionService {
@@ -23,6 +31,20 @@ public class CalificacionServiceImplement implements CalificacionService {
     private final UsuarioRepository usuarioRepo;
     private final ServicioRepository servicioRepo;
 
+    /**
+     * Creates a new rating (calificación) for a provider or service.
+     * If a rating already exists for the same client-provider-service combination,
+     * it updates the existing record instead of creating a new one.
+     *
+     * @param idCliente ID of the client submitting the rating
+     * @param dto       DTO containing rating details
+     *                  - dto.getPuntuacion(): rating score (1-5)
+     *                  - dto.getComentario(): optional comment
+     *                  - dto.getProveedorId(): optional provider ID
+     *                  - dto.getServicioId(): optional service ID
+     *
+     * @throws IllegalArgumentException if input data is invalid
+     */
     @Override
     @Transactional
     public void crear(Long idCliente, CalificacionCreateDTO dto) {
@@ -35,11 +57,13 @@ public class CalificacionServiceImplement implements CalificacionService {
             throw new IllegalArgumentException("Debes indicar un proveedor o un servicio.");
         }
 
+        // Retrieve client reference (lazy-loaded)
         UsuarioEntity cliente = usuarioRepo.getReferenceById(idCliente);
 
         ServicioEntity servicio = null;
         UsuarioEntity proveedor;
 
+        // Determine if rating is for a specific service or only provider
         if (dto.getServicioId() != null) {
             servicio = servicioRepo.getReferenceById(dto.getServicioId());
             proveedor = servicio.getProveedor();
@@ -47,12 +71,14 @@ public class CalificacionServiceImplement implements CalificacionService {
             proveedor = usuarioRepo.getReferenceById(dto.getProveedorId());
         }
 
+        // Check if a rating already exists for this client-provider(-service) combination
         Optional<CalificacionEntity> existente = (servicio != null)
                 ? calificacionRepo.findByCliente_IdUsuarioAndProveedor_IdUsuarioAndServicio_IdServicio(
-                cliente.getIdUsuario(), proveedor.getIdUsuario(), servicio.getIdServicio())
+                        cliente.getIdUsuario(), proveedor.getIdUsuario(), servicio.getIdServicio())
                 : calificacionRepo.findByCliente_IdUsuarioAndProveedor_IdUsuarioAndServicioIsNull(
-                cliente.getIdUsuario(), proveedor.getIdUsuario());
+                        cliente.getIdUsuario(), proveedor.getIdUsuario());
 
+        // If exists, update it; otherwise create a new rating
         CalificacionEntity c = existente.orElseGet(CalificacionEntity::new);
         c.setCliente(cliente);
         c.setProveedor(proveedor);
@@ -61,14 +87,27 @@ public class CalificacionServiceImplement implements CalificacionService {
         c.setComentario(dto.getComentario());
         c.setFecha(LocalDateTime.now());
 
+        // Persist the rating
         calificacionRepo.save(c);
     }
 
+    /**
+     * Returns a list of all ratings in the system.
+     *
+     * @return List of CalificacionEntity
+     */
     @Override
     public List<CalificacionEntity> listarTodas() {
         return calificacionRepo.findAll();
     }
 
+    /**
+     * Returns a list of ratings filtered by a specific score (puntuación),
+     * ordered by most recent first.
+     *
+     * @param puntuacion the score to filter by (1-5)
+     * @return List of CalificacionEntity matching the score
+     */
     @Override
     public List<CalificacionEntity> listarPorPuntuacion(int puntuacion) {
         return calificacionRepo.findByPuntuacionOrderByFechaDesc(puntuacion);

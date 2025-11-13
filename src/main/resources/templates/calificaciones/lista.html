@@ -1,11 +1,17 @@
 <!-- src/main/resources/templates/calificaciones/lista.html -->
+<!-- Archivo de la plantilla para mostrar la lista de calificaciones -->
+<!-- Template file to display the list of ratings -->
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <title>Calificaciones | ServiExpress</title>
+    <!-- Configuración de la vista responsiva -->
+    <!-- Responsive viewport configuration -->
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
+        /* Paleta de colores principal */
+        /* Main color palette */
         :root{
             --bg:#f8f4f1;
             --panel:#fff;
@@ -16,7 +22,13 @@
             --border:#e8dcd3;
             --shadow:rgba(0,0,0,.05);
         }
+
+        /* Estilos generales */
+        /* General styles */
         *{box-sizing:border-box;margin:0;padding:0;font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+
+        /* Cuerpo principal de la página */
+        /* Main body of the page */
         body{
             background:var(--bg);
             color:var(--text);
@@ -26,6 +38,7 @@
         }
 
         /* NAVBAR */
+        /* Barra de navegación superior */
         nav{
             background:#fae7dc;
             border-bottom:1px solid var(--border);
@@ -34,13 +47,22 @@
             align-items:center;
             justify-content:space-between;
         }
+
+        /* Estilo de la marca (nombre ServiExpress) */
+        /* Brand name style */
         .nav-brand{
             font-size:1.4rem;
             font-weight:800;
             color:var(--accent);
             text-decoration:none;
         }
+
+        /* Contenedor de acciones en el navbar */
+        /* Navbar actions container */
         .nav-actions{display:flex;gap:10px;align-items:center}
+
+        /* Botón de cerrar sesión */
+        /* Logout button */
         .nav-btn{
             background:var(--accent);
             color:#fff;
@@ -52,15 +74,22 @@
             transition:background .2s ease, transform .1s ease;
             box-shadow:0 6px 16px rgba(197,112,93,.25);
         }
+
+        /* Efecto hover del botón */
+        /* Button hover effect */
         .nav-btn:hover{background:var(--accent-dark);transform:translateY(-1px)}
 
         /* MAIN WRAPPER */
+        /* Contenedor principal del contenido */
         .wrap{
             flex:1;
             max-width:1200px;
             margin:40px auto;
             padding:0 20px;
         }
+
+        /* Título principal de la página */
+        /* Main page title */
         h1{
             font-size:2rem;
             font-weight:800;
@@ -70,6 +99,7 @@
         }
 
         /* FILTER CHIPS */
+        /* Filtros de estrellas */
         .filters{
             display:flex;
             align-items:center;
@@ -78,7 +108,13 @@
             margin-bottom:20px;
             justify-content:center;
         }
+
+        /* Texto del label de filtro */
+        /* Filter label text */
         .filters .lbl{color:var(--muted);font-weight:700}
+
+        /* Estilos para las chips de filtro */
+        /* Filter chip styles */
         .chip{
             display:inline-flex;
             align-items:center;
@@ -92,16 +128,29 @@
             color:var(--text);
             transition:all .15s ease;
         }
+
+        /* Efecto hover en chip */
+        /* Chip hover effect */
         .chip:hover{background:#f1e0d9}
+
+        /* Chip activa */
+        /* Active chip */
         .chip.active{background:#ffd9c8;border-color:#ffc5b0}
+
+        /* Estilo de estrellas pequeñas */
+        /* Small stars style */
         .stars-sm{letter-spacing:1px;font-size:15px;color:var(--accent)}
 
         /* GRID CARDS */
+        /* Rejilla para las tarjetas */
         .grid{
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
             gap:20px;
         }
+
+        /* Estilo de las tarjetas individuales */
+        /* Individual card style */
         .card{
             background:var(--panel);
             border:1px solid var(--border);
@@ -112,6 +161,9 @@
             flex-direction:column;
             justify-content:space-between;
         }
+
+        /* Sección de metadatos (fecha y estrellas) */
+        /* Metadata section (date and stars) */
         .meta{
             display:flex;
             align-items:center;
@@ -119,14 +171,26 @@
             flex-wrap:wrap;
             gap:6px;
         }
+
+        /* Fecha */
+        /* Date text */
         .when{font-weight:700;color:var(--muted)}
+
+        /* Estrellas principales */
+        /* Main stars */
         .stars{font-size:18px;letter-spacing:2px;color:var(--accent)}
+
+        /* Comentario del cliente */
+        /* Customer comment */
         .comment{
             margin:16px 0 12px;
             color:#3b312c;
             font-size:15px;
             line-height:1.4;
         }
+
+        /* Fila con información secundaria */
+        /* Row with secondary info */
         .row-muted{
             font-size:14px;
             color:var(--muted);
@@ -134,7 +198,13 @@
             flex-wrap:wrap;
             gap:12px;
         }
+
+        /* Texto resaltado dentro de la fila */
+        /* Bold text inside muted row */
         .row-muted b{color:var(--text)}
+
+        /* Adaptación para pantallas pequeñas */
+        /* Responsive for small screens */
         @media(max-width:520px){
             .grid{grid-template-columns:1fr}
         }
@@ -142,9 +212,13 @@
 </head>
 <body>
 
+<!-- Barra de navegación principal -->
+<!-- Main navigation bar -->
 <nav>
     <a th:href="@{/}" class="nav-brand">ServiExpress</a>
     <div class="nav-actions">
+        <!-- Formulario para cerrar sesión -->
+        <!-- Logout form -->
         <form th:action="@{/auth/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <button type="submit" class="nav-btn">Cerrar sesión</button>
@@ -152,16 +226,22 @@
     </div>
 </nav>
 
+<!-- Contenedor principal del contenido -->
+<!-- Main content container -->
 <div class="wrap">
     <h1>Historial de Calificaciones</h1>
 
     <!-- FILTROS -->
+    <!-- FILTERS -->
     <div class="filters">
         <span class="lbl">Filtrar por estrellas:</span>
-
+        <!-- Enlace para ver todas las calificaciones -->
+        <!-- Link to view all ratings -->
         <a class="chip" th:classappend="${rating} == null ? ' active' : ''"
            th:href="@{/calificaciones}">Todas</a>
 
+        <!-- Enlaces de filtro por cada número de estrellas -->
+        <!-- Filter links by each number of stars -->
         <a class="chip" th:classappend="${rating} == 1 ? ' active' : ''"
            th:href="@{/calificaciones(rating=1)}"><span class="stars-sm">★☆☆☆☆</span></a>
 
@@ -179,17 +259,28 @@
     </div>
 
     <!-- LISTA EN CARDS -->
+    <!-- LIST IN CARDS -->
     <div class="grid">
+        <!-- Itera sobre la lista de calificaciones -->
+        <!-- Iterates over the list of ratings -->
         <article class="card" th:each="c : ${calificaciones}">
             <div>
                 <div class="meta">
+                    <!-- Fecha de la calificación -->
+                    <!-- Rating date -->
                     <div class="when" th:text="${#temporals.format(c.fecha, 'yyyy-MM-dd HH:mm')}">2025-09-06 22:40</div>
+                    <!-- Estrellas mostradas -->
+                    <!-- Displayed stars -->
                     <div class="stars"
                          th:text="${'★'.repeat(c.puntuacion) + '☆'.repeat(5 - c.puntuacion)}">★★★★★</div>
                 </div>
 
+                <!-- Comentario del usuario -->
+                <!-- User comment -->
                 <div class="comment" th:text="${c.comentario}">Comentario…</div>
 
+                <!-- Información adicional: proveedor, servicio y cliente -->
+                <!-- Additional information: provider, service, and client -->
                 <div class="row-muted">
                     <span>Proveedor: <b th:text="${c.proveedor.nombreUsuario}">—</b></span>
                     <span>Servicio: <b th:text="${c.servicio != null ? c.servicio.nombre : '—'}">—</b></span>
@@ -198,6 +289,8 @@
             </div>
         </article>
 
+        <!-- Mensaje cuando no hay calificaciones -->
+        <!-- Message when there are no ratings -->
         <div th:if="${#lists.isEmpty(calificaciones)}" class="card">
             <div class="comment">No hay calificaciones para este filtro.</div>
         </div>

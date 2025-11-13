@@ -1,25 +1,32 @@
-<!-- =====================
- ServiExpress · HOME (index)
- Estilo unificado (Poppins, paleta melocotón/terracota, botones y tarjetas consistentes)
-===================== -->
-<!doctype html>
+<!DOCTYPE html>
+<!-- Archivo principal: página de inicio de ServiExpress / Main file: ServiExpress home page -->
+<!-- Proporciona la estructura y estilos para el marketplace / Provides structure and styles for the marketplace -->
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<!-- Se establece el idioma a español y namespaces para Thymeleaf / Language set to Spanish and namespaces for Thymeleaf -->
 <head>
+    <!-- Metadatos y recursos / Metadata and resources -->
     <meta charset="utf-8">
+    <!-- Codificación UTF-8 / UTF-8 encoding -->
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- Configuración responsive / Responsive viewport -->
     <title>ServiExpress · Marketplace</title>
+    <!-- Título de la página / Page title -->
 
-    <!-- Poppins (peso 400/600/800) -->
+    <!-- Fuente Poppins (Google Fonts) / Poppins font (Google Fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Preconexión a Google Fonts / Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preconexión a dominio de fuentes con CORS / Preconnect to fonts domain with CORS -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Inclusión de Poppins con pesos 400/600/800 / Include Poppins with weights 400/600/800 -->
 
-    <!-- Hoja global si la tienes -->
+    <!-- Hoja de estilos global opcional (Thymeleaf) / Optional global stylesheet (Thymeleaf) -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 
     <style>
+        /* Variables y paleta unificada / Variables and unified palette */
         :root{
             /* Paleta unificada */
             --bg1:#fdeee6; --bg2:#f8e3d8; --page:#f7f4f1; --text:#3e2a2a; --muted:#7b5e57;
@@ -27,25 +34,31 @@
             --surface:#ffffff; --line:#efdfd7; --footer-bg:#e9dbd3; --footer-text:#5b4039;
             --radius:14px;
         }
+        /* Reset box-sizing y base / Box-sizing reset and base */
         *{box-sizing:border-box}
         html,body{height:100%}
+        /* Estilos base del body / Base body styles */
         body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--page);color:var(--text)}
 
+        /* Layout principal: página y contenedores / Main layout: page and containers */
         .page{min-height:100vh;display:flex;flex-direction:column}
         main{flex:1}
         .shell{width:100%;padding:0 24px}
         .wrap-xl{max-width:1200px;margin:0 auto}
 
-        /* NAVBAR */
+        /* NAVBAR: estilo y comportamiento sticky / NAVBAR: style and sticky behavior */
         .navbar{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,var(--bg1),var(--bg2));border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(4px)}
         .navbar .inner{display:flex;align-items:center;gap:14px;padding:12px 16px}
+        /* Marca del sitio / Site brand */
         .brand a{font-weight:800;letter-spacing:.2px;font-size:20px;text-decoration:none;color:var(--brand-2)}
         .nav-spacer{flex:1}
 
+        /* Caja de búsqueda en navbar / Search box in navbar */
         .search{flex:1;max-width:540px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--ring);border-radius:999px;padding:8px 12px;box-shadow:0 8px 20px rgba(199,116,98,.08)}
         .search input{border:0;outline:0;width:100%;font-size:14px;color:var(--text)}
         @media (max-width:860px){.search{display:none}}
 
+        /* Acciones de navegación: botones / Navigation actions: buttons */
         .nav-actions{display:flex;gap:10px;align-items:center}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--brand);color:var(--brand-2);background:transparent;transition:.18s ease;cursor:pointer}
         .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(199,116,98,.18)}
@@ -54,9 +67,9 @@
         .btn.ghost{background:transparent;border-color:#d1b7af;color:#5a403a}
         .btn.linklike{background:transparent;border-color:transparent;padding:10px 12px}
 
-        /* HERO media — versión más pequeña */
+        /* HERO media (imagen lateral) / HERO media (side image) */
         .hero-media{
-            width:clamp(140px, 22vw, 240px); /* ↓ antes 240–380px */
+            width:clamp(140px, 22vw, 240px); /* tamaño responsivo / responsive size */
             max-width:28%;
             aspect-ratio:4/3;
             border-radius:var(--radius);
@@ -71,7 +84,7 @@
             object-fit:contain;
         }
 
-        /* Ajuste en móviles */
+        /* Ajustes en móviles para el hero / Mobile adjustments for hero */
         @media (max-width:780px){
             header .card{flex-direction:column}
             .hero-media{
@@ -81,7 +94,7 @@
             }
         }
 
-        /* Secciones / tarjetas */
+        /* Secciones y tarjetas: cabeceras, grids y paginación / Sections and cards: headers, grids and pagination */
         header .card{border:1px solid var(--line)}
         .title{color:var(--text)}
         .badge{display:inline-block;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #f0d8cf;font-weight:600;color:#5e4038}
@@ -110,34 +123,45 @@
         .muted{color:#8a6f67}
         .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 
-        /* FOOTER */
+        /* FOOTER: estilo y contenedor / Footer: style and container */
         .footer{background:var(--footer-bg);color:var(--footer-text);border-top:1px solid #d8c8c0;padding:22px 0;margin-top:24px}
     </style>
 </head>
 
 <body th:attr="data-cliente-id=${idCliente != null ? idCliente : 0}">
+<!-- Cuerpo: se añade atributo con id del cliente para scripts si aplica / Body: attaches client id attribute for scripts if needed -->
 <div class="page">
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR principal / Main NAVBAR -->
     <nav class="navbar" role="navigation">
         <div class="inner shell wrap-xl">
+            <!-- Marca / Brand -->
             <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
+            <!-- Espaciador flexible para alinear acciones a la derecha / Flexible spacer to align actions right -->
             <div class="nav-spacer"></div>
+
+            <!-- Acciones de navegación (condicionales con Thymeleaf / navigation actions (Thymeleaf conditionals)) -->
             <div class="nav-actions">
                 <a class="btn ghost" th:href="@{/}">Inicio</a>
 
+                <!-- Enlace solo para ADMIN (Thymeleaf) / Link visible only to ADMIN (Thymeleaf) -->
                 <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
                    th:href="@{/Admins/servicios}"
                    class="btn">⚙️ Gestionar Servicios</a>
 
+                <!-- Enlace para CLIENTE o PROVEEDOR / Link for CLIENT or PROVIDER -->
                 <a th:if="${#authorization.expression('hasRole(''CLIENTE'') or hasRole(''PROVEEDOR'')')}"
                    th:href="@{/servicio}"
                    class="btn filled">🚀 Ir a Servicios</a>
 
+                <!-- Gestión de usuarios visible solo para ADMIN / User management visible only to ADMIN -->
                 <a class="btn ghost" th:href="@{/Admins/usuarios}" sec:authorize="hasRole('ADMIN')">Gestión Usuarios</a>
 
+                <!-- Login/Register para no autenticados / Login/Register for unauthenticated users -->
                 <a class="btn" th:href="@{/auth/login}" sec:authorize="!isAuthenticated()">Iniciar sesión</a>
                 <a class="btn filled" th:href="@{/auth/registro}" sec:authorize="!isAuthenticated()">Registrar usuario</a>
+
+                <!-- Formulario de logout para usuarios autenticados / Logout form for authenticated users -->
                 <form th:action="@{/auth/logout}" method="post" sec:authorize="isAuthenticated()" style="margin:0">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <button type="submit" class="btn linklike">Cerrar sesión</button>
@@ -146,15 +170,17 @@
         </div>
     </nav>
 
-    <!-- CONTENIDO -->
+    <!-- CONTENIDO PRINCIPAL / MAIN CONTENT -->
     <main>
-        <!-- HERO -->
+        <!-- HERO: encabezado principal / HERO: main header -->
         <header class="shell section">
             <div class="wrap-xl">
                 <div class="card bg-surface shadow-md" style="padding:24px;display:flex;align-items:center;gap:24px">
                     <div style="flex:1">
                         <h1 class="title" style="margin:0 0 6px">Encuentra profesionales confiables</h1>
+                        <!-- Subtítulo descriptivo / Descriptive subtitle -->
                         <p class="text-muted" style="margin:0">Limpieza, plomería, electricidad, reparaciones y más — cerca de ti, con pagos seguros y calificaciones reales.</p>
+                        <!-- Badges / categoría rápida / Quick category badges -->
                         <div class="mt-4" style="display:flex;gap:10px;flex-wrap:wrap">
                             <a class="badge primary" th:href="@{/calificaciones}">⭐ Más valorados</a>
                             <a class="badge">🏷️ Promociones</a>
@@ -164,7 +190,7 @@
                         </div>
                     </div>
 
-                    <!-- Imagen hero con tamaño controlado -->
+                    <!-- Imagen hero (logo/ilustración) / Hero image (logo/illustration) -->
                     <div class="hero-media">
                         <img src="/images/logo.png" alt="Profesional prestando servicio" loading="lazy">
                     </div>
@@ -172,11 +198,13 @@
             </div>
         </header>
 
-        <!-- SERVICIOS -->
+        <!-- SECCIÓN: Servicios destacados / SECTION: Featured services -->
         <section class="shell section section--services">
             <div class="wrap-xl">
                 <div class="section-header">
                     <h2 style="margin:0">Servicios destacados</h2>
+
+                    <!-- Paginación condicional si hay varias páginas / Pagination shown when multiple pages exist -->
                     <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
                         <a class="page-btn" th:href="@{/(page=${currentPage > 0 ? currentPage - 1 : 0})}">«</a>
                         <a class="page-btn"
@@ -188,6 +216,7 @@
                     </div>
                 </div>
 
+                <!-- Grid de servicios si existen / Grid of services if present -->
                 <div class="grid cols-4" th:if="${!#lists.isEmpty(servicios)}">
                     <article class="product-card card" th:each="s : ${servicios}">
                         <div class="media">
@@ -205,12 +234,13 @@
                     </article>
                 </div>
 
+                <!-- Mensaje cuando no hay servicios / Message when no services -->
                 <div class="muted" th:if="${#lists.isEmpty(servicios)}" style="margin-top:12px">No hay servicios disponibles.</div>
                 <div class="divider"></div>
             </div>
         </section>
 
-        <!-- TOP PROVEEDORES -->
+        <!-- SECCIÓN: Proveedores top / SECTION: Top providers -->
         <section class="shell section section--top">
             <div class="wrap-xl">
                 <div class="card">
@@ -225,6 +255,7 @@
                                 </a>
                             </div>
                         </div>
+                        <!-- Nota cuando no hay datos suficientes / Note when not enough data -->
                         <div class="muted" th:if="${#lists.isEmpty(topProveedores)}">Aún no hay calificaciones suficientes para el ranking.</div>
                     </div>
                 </div>
@@ -232,7 +263,7 @@
         </section>
     </main>
 
-    <!-- FOOTER -->
+    <!-- FOOTER: derechos y nota de servicio / FOOTER: copyright and service note -->
     <footer class="footer">
         <div class="shell">
             <div class="wrap-xl">

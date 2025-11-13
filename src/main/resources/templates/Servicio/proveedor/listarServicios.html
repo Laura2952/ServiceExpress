@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>Mis Servicios | ServiExpress</title>
 
-    <!-- Fuente y Bootstrap -->
+    <!-- 🌐 Fuente y Bootstrap -->
+    <!-- 🌐 Font and Bootstrap -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
@@ -13,7 +14,8 @@
 
     <style>
         :root{
-            /* MISMA PALETA DEL ADMIN */
+            /* 🎨 Paleta de colores del administrador */
+            /* 🎨 Admin color palette */
             --bg:#F8EDE3;
             --tone-2:#DFD3C3;
             --tone-3:#D0B8A8;
@@ -33,12 +35,15 @@
 
         *{box-sizing:border-box;}
         body{
+            /* 💅 Estilos generales del cuerpo */
+            /* 💅 General body styles */
             font-family:Poppins, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
             background:var(--bg);
             color:var(--text);
             margin:0;
         }
 
+        /* ===== NAVBAR ===== */
         /* ===== NAVBAR ===== */
         .se-nav{
             position:sticky; top:0; z-index:50;
@@ -47,9 +52,13 @@
             backdrop-filter:saturate(1.1) blur(4px);
         }
         .se-brand{
+            /* ✳️ Estilo del nombre de la marca */
+            /* ✳️ Brand name style */
             font-weight:800; letter-spacing:.2px; color:var(--brand-600)!important; text-decoration:none; font-size:20px;
         }
         .se-chip{
+            /* 💠 Botones tipo chip */
+            /* 💠 Chip-style buttons */
             background:var(--surface); border:1px solid var(--tone-2); border-radius:999px;
             padding:.55rem .95rem; box-shadow:0 6px 16px rgba(0,0,0,.06); font-weight:700;
         }
@@ -59,12 +68,14 @@
         .form-control:focus{ border-color:var(--brand)!important; box-shadow:0 0 0 .25rem var(--ring)!important; }
 
         /* ===== CONTENEDOR / CARD ===== */
+        /* ===== CONTAINER / CARD ===== */
         .se-card{
             background:var(--surface); border:1px solid var(--tone-2);
             border-radius:18px; padding:1.5rem; box-shadow:0 10px 28px rgba(0,0,0,.06);
         }
 
         /* ===== TITULOS ===== */
+        /* ===== TITLES ===== */
         h1{
             font-weight:800;
             color:var(--brand-600);
@@ -77,6 +88,7 @@
         }
 
         /* ===== BUSCADOR ===== */
+        /* ===== SEARCH BOX ===== */
         .search-box{
             display:flex; align-items:center; gap:.5rem;
             background:var(--surface);
@@ -94,6 +106,7 @@
         }
 
         /* ===== TABLA ===== */
+        /* ===== TABLE ===== */
         .table thead th{
             background:var(--tone-2)!important;
             color:#5a493f;
@@ -111,6 +124,7 @@
         }
 
         /* ===== PILLS ===== */
+        /* ===== STATUS PILLS ===== */
         .pill{
             display:inline-flex; align-items:center; gap:8px;
             padding:6px 10px;
@@ -125,6 +139,7 @@
         .pill[data-state="INACTIVO"]{ background:var(--off-bg); color:var(--off); }
 
         /* ===== BOTONES ===== */
+        /* ===== BUTTONS ===== */
         .btn{
             border-radius:30px;
             font-weight:600;
@@ -146,6 +161,7 @@
             background:#a53a30;
         }
 
+        /* ===== MODAL ===== */
         /* ===== MODAL ===== */
         .modal-overlay{
             position:fixed; inset:0;
@@ -169,7 +185,8 @@
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
+<!-- 🧭 Barra de navegación principal -->
+<!-- 🧭 Main navigation bar -->
 <nav class="se-nav py-3">
     <div class="container d-flex align-items-center justify-content-between gap-3">
         <a class="se-brand" th:href="@{/}">ServiExpress</a>
@@ -184,7 +201,8 @@
     </div>
 </nav>
 
-<!-- ===== CONTENIDO PRINCIPAL ===== -->
+<!-- 📄 Contenido principal -->
+<!-- 📄 Main content -->
 <main class="container my-5">
     <div class="se-card mb-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
@@ -195,7 +213,8 @@
             <a class="btn btn-brand" th:href="@{/servicio/crearServicio}">+ Crear servicio</a>
         </div>
 
-        <!-- Buscador -->
+        <!-- 🔍 Buscador -->
+        <!-- 🔍 Search bar -->
         <div class="search-box">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                  fill="none" stroke="#C5705D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -205,7 +224,8 @@
             <input type="search" id="buscar" placeholder="Buscar por nombre, descripción o estado…">
         </div>
 
-        <!-- Tabla -->
+        <!-- 📋 Tabla de servicios -->
+        <!-- 📋 Services table -->
         <div class="table-responsive">
             <table class="table table-striped table-hover align-middle">
                 <thead>
@@ -241,7 +261,8 @@
     </div>
 </main>
 
-<!-- MODAL ELIMINAR -->
+<!-- ⚠️ Modal de confirmación para eliminar -->
+<!-- ⚠️ Delete confirmation modal -->
 <div id="modalEliminar" class="modal-overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <h2 id="modalTitle">¿Eliminar este servicio?</h2>
@@ -256,24 +277,38 @@
     </div>
 </div>
 
+<!-- ⚙️ Script principal -->
+<!-- ⚙️ Main script -->
 <script>
     const modal = document.getElementById("modalEliminar");
     const formEliminar = document.getElementById("formEliminar");
 
+    // 🪟 Abre el modal y define la acción del formulario
+    // 🪟 Opens the modal and sets the form action
     function abrirModal(btn){
         const idServicio = btn.getAttribute("data-id");
         formEliminar.setAttribute("action","/servicio/eliminar/"+idServicio);
         modal.classList.add("open");
         modal.setAttribute("aria-hidden","false");
     }
+
+    // 🚪 Cierra el modal
+    // 🚪 Closes the modal
     function cerrarModal(){
         modal.classList.remove("open");
         modal.setAttribute("aria-hidden","true");
     }
+
+    // 🖱️ Cierra el modal al hacer clic fuera
+    // 🖱️ Close modal when clicking outside
     modal.addEventListener("click",e=>{ if(e.target===modal) cerrarModal(); });
+
+    // ⌨️ Cierra el modal con la tecla Escape
+    // ⌨️ Close modal with Escape key
     document.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarModal(); });
 
-    // Filtro
+    // 🔎 Filtro de búsqueda
+    // 🔎 Search filter
     const inputBuscar=document.getElementById("buscar");
     inputBuscar.addEventListener("input",function(){
         const filtro=(this.value||"").toLowerCase();

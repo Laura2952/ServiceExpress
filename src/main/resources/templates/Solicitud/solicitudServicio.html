@@ -1,25 +1,68 @@
 <!DOCTYPE html>
+<!-- Declaración del tipo de documento HTML5 / HTML5 document type declaration -->
+
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!-- Se establece el idioma a español y se habilita el espacio de nombres de Thymeleaf / Set language to Spanish and enable Thymeleaf namespace -->
+
 <head>
+    <!-- Encabezado del documento / Document header -->
+
     <meta charset="UTF-8">
+    <!-- Codificación de caracteres UTF-8 / Character encoding UTF-8 -->
+
     <title>Solicitud de Servicio</title>
+    <!-- Título de la pestaña del navegador / Browser tab title -->
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- Configura la vista adaptable para dispositivos móviles / Sets viewport for mobile devices -->
+
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Enlace a la hoja de estilos externa / Link to external stylesheet -->
+
     <style>
+        /* Estilos internos para la interfaz del formulario / Internal styles for the form interface */
+
         .container{max-width:900px;margin:40px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+        /* Contenedor principal centrado con fondo blanco / Centered main container with white background */
+
         .tabs{display:flex;gap:6px;margin:16px 0 12px}
+        /* Contenedor de pestañas / Tabs container */
+
         .tab{flex:1;text-align:center;padding:10px;border:1px solid #efd8cf;border-radius:10px;background:#fbeae0;font-weight:800;color:#563d37;opacity:.6}
+        /* Estilo base de cada pestaña / Base style for each tab */
+
         .tab.on{background:#c77462;color:#fff;opacity:1}
+        /* Estilo de pestaña activa / Active tab style */
+
         .panel{display:none;animation:fade .12s ease}
+        /* Panel oculto con animación / Hidden panel with animation */
+
         .panel.on{display:block}
+        /* Panel activo visible / Visible active panel */
+
         @keyframes fade{from{opacity:.8;transform:translateY(2px)} to{opacity:1;transform:translateY(0)}}
+        /* Animación de aparición suave / Smooth fade-in animation */
+
         .field{display:grid;gap:8px;margin:14px 0}
+        /* Contenedor de campo de formulario / Form field container */
+
         textarea,input[type="text"]{width:100%;padding:10px;border:1px solid #efdfd7;border-radius:10px;font:inherit}
+        /* Campos de texto y área de texto / Text and textarea fields */
+
         .row{display:flex;gap:10px;flex-wrap:wrap}
+        /* Fila para botones o elementos agrupados / Row for grouped elements */
+
         .btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;border:1px solid #efdfd7;background:#fff;color:#a45445;cursor:pointer}
+        /* Botón base / Base button */
+
         .btn.primary{background:#c77462;border-color:#c77462;color:#fff}
+        /* Botón primario / Primary button */
+
         .btn.primary:hover{background:#a45445}
+        /* Efecto hover del botón primario / Hover effect for primary button */
+
         .muted{color:#7a6f68;font-size:.92rem}
+        /* Texto atenuado para notas / Muted text for notes */
 
         .navbar {
             position: sticky;
@@ -29,6 +72,8 @@
             border-bottom: 1px solid var(--line);
             box-shadow: 0 4px 20px rgba(236, 64, 122, 0.2);
         }
+        /* Barra de navegación fija superior / Sticky top navigation bar */
+
         .navbar .inner {
             max-width: 1200px;
             margin: 0 auto;
@@ -37,94 +82,170 @@
             align-items: center;
             gap: 14px;
         }
+        /* Contenedor interno de la barra de navegación / Navbar inner container */
+
         .brand a {
             font-weight: 800;
             font-size: 22px;
             color: var(--brand-2);
         }
+        /* Estilo del nombre de marca / Brand name style */
+
         .nav-spacer { flex: 1; }
+        /* Espaciador flexible / Flexible spacer */
+
         .nav-actions { display: flex; align-items: center; gap: 10px; }
+        /* Contenedor de acciones de navegación / Navigation actions container */
 
     </style>
+    <!-- Fin de los estilos internos / End of internal styles -->
 </head>
+
 <body>
+<!-- Cuerpo principal del documento / Main body of the document -->
+
 <nav class="navbar">
+    <!-- Barra de navegación principal / Main navigation bar -->
+
     <div class="inner">
+        <!-- Contenedor interno de la barra / Navbar inner content -->
+
         <div class="brand"><a th:href="@{/}">ServiExpress</a></div>
+        <!-- Enlace de la marca al inicio / Brand link to homepage -->
+
         <div class="nav-spacer"></div>
+        <!-- Espaciador para distribuir los elementos / Spacer to separate elements -->
+
         <div class="nav-actions">
+            <!-- Sección de acciones del usuario / User action section -->
+
             <a class="btn ghost" th:href="@{/}">Inicio</a>
+            <!-- Botón para volver al inicio / Button to go back to homepage -->
+
             <a class="btn solid" th:href="@{/solicitud/historial}">📜 Ver Historial</a>
+            <!-- Enlace al historial de solicitudes / Link to service request history -->
+
             <form th:action="@{/auth/logout}" method="post" style="margin:0">
+                <!-- Formulario para cerrar sesión / Form for user logout -->
+
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!-- Token CSRF oculto para seguridad / Hidden CSRF token for security -->
+
                 <button type="submit" class="btn linklike">Cerrar sesión</button>
+                <!-- Botón de cierre de sesión / Logout button -->
             </form>
         </div>
     </div>
 </nav>
+
 <div class="container">
+    <!-- Contenedor principal del formulario / Main form container -->
+
     <h1>Solicitar servicio</h1>
+    <!-- Título principal de la página / Main page title -->
 
     <div class="muted" style="margin-bottom:12px">
+        <!-- Información resumida del servicio / Summary info of the service -->
+
         <strong th:text="${servicio.nombre}">Nombre</strong> ·
+        <!-- Nombre del servicio / Service name -->
+
         $<span th:text="${servicio.precio}">0</span> COP ·
+        <!-- Precio del servicio / Service price -->
+
         <span th:text="${servicio.proveedor != null ? servicio.proveedor.nombreUsuario : 'Sin asignar'}">Proveedor</span>
+        <!-- Nombre del proveedor o 'Sin asignar' / Provider name or 'Unassigned' -->
     </div>
 
-    <!-- Wizard Tabs -->
+    <!-- Pestañas del asistente (Wizard Tabs) / Wizard step tabs -->
     <div class="tabs">
         <div id="tab1" class="tab on">1) Especificaciones</div>
+        <!-- Primera pestaña activa / First active tab -->
+
         <div id="tab2" class="tab">2) Confirmar dirección</div>
+        <!-- Segunda pestaña / Second tab -->
     </div>
 
     <form th:action="@{/solicitud/guardar}" method="post" id="formSolicitud">
-        <input type="hidden" name="idServicio" th:value="${servicio.idServicio}">
+        <!-- Formulario para enviar la solicitud de servicio / Form to submit the service request -->
 
-        <!-- Paso 1 -->
+        <input type="hidden" name="idServicio" th:value="${servicio.idServicio}">
+        <!-- Campo oculto con el ID del servicio / Hidden field with service ID -->
+
+        <!-- Paso 1: Especificaciones del servicio / Step 1: Service specifications -->
         <section id="panel1" class="panel on">
             <div class="field">
                 <label for="detalles"><strong>¿Deseas añadir especificaciones?</strong></label>
+                <!-- Etiqueta para el campo de detalles / Label for the details field -->
+
                 <textarea id="detalles" name="detalles" maxlength="500" rows="5"
                           placeholder="Ej: Cortinas 2m x 3m, color beige; instalación el sábado en la mañana."
                           required></textarea>
+                <!-- Campo de texto para especificaciones / Text area for specifications -->
+
                 <small class="muted">Máx. 500 caracteres</small>
+                <!-- Nota de límite de caracteres / Character limit note -->
             </div>
+
             <div class="row">
+                <!-- Fila con el botón de continuar / Row with continue button -->
+
                 <button type="button" class="btn primary" onclick="goStep(2)">Guardar y continuar →</button>
+                <!-- Botón que avanza al paso 2 / Button that moves to step 2 -->
             </div>
         </section>
 
-        <!-- Paso 2 -->
+        <!-- Paso 2: Confirmar dirección / Step 2: Confirm address -->
         <section id="panel2" class="panel">
             <div class="field">
                 <label for="direccionEntrega"><strong>Confirma la dirección</strong></label>
+                <!-- Etiqueta para el campo de dirección / Label for address field -->
+
                 <input id="direccionEntrega" name="direccionEntrega" type="text" maxlength="180"
                        placeholder="Ej: Calle 123 #45-67, Apto 302, Barrio Centro, Tunja"
                        required>
+                <!-- Campo de entrada de dirección / Address input field -->
+
                 <small class="muted">Usaremos esta dirección para la prestación/envío del servicio.</small>
+                <!-- Nota informativa sobre la dirección / Informative note about address -->
             </div>
+
             <div class="row">
+                <!-- Fila de botones de navegación / Row with navigation buttons -->
+
                 <button type="button" class="btn" onclick="goStep(1)">← Volver</button>
+                <!-- Botón para regresar al paso anterior / Button to return to previous step -->
+
                 <button type="submit" class="btn primary">Solicitar</button>
+                <!-- Botón para enviar la solicitud / Button to submit the request -->
             </div>
         </section>
     </form>
 </div>
 
 <script>
+    // Script para controlar el cambio de pasos del formulario / Script to control form step navigation
+
     function goStep(n){
-      // pestañas
-      document.getElementById('tab1').classList.toggle('on', n===1);
-      document.getElementById('tab2').classList.toggle('on', n===2);
-      // paneles
-      document.getElementById('panel1').classList.toggle('on', n===1);
-      document.getElementById('panel2').classList.toggle('on', n===2);
-      // foco amable
-      setTimeout(()=>{
-        if(n===1) document.getElementById('detalles').focus();
-        if(n===2) document.getElementById('direccionEntrega').focus();
-      }, 60);
+        // pestañas / tabs
+        document.getElementById('tab1').classList.toggle('on', n===1);
+        document.getElementById('tab2').classList.toggle('on', n===2);
+
+        // paneles / panels
+        document.getElementById('panel1').classList.toggle('on', n===1);
+        document.getElementById('panel2').classList.toggle('on', n===2);
+
+        // foco amable / focus transition
+        setTimeout(()=>{
+            if(n===1) document.getElementById('detalles').focus();
+            if(n===2) document.getElementById('direccionEntrega').focus();
+        }, 60);
     }
 </script>
+<!-- Fin del script de control de pasos / End of step control script -->
+
 </body>
+<!-- Fin del cuerpo del documento / End of body section -->
+
 </html>
+<!-- Fin del documento HTML / End of HTML document -->
